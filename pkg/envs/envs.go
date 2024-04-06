@@ -35,7 +35,7 @@ var (
 	LogFileBaseDir = envx.Get("LOG_FILE_BASE_DIR", filepath.Join(pathx.GetCurPKGPath(), "../../logs"))
 
 	// LogLevel 日志等级（panic/fatal/error/warn/info/debug/trace）
-	LogLevel = envx.Get("LOG_LEVEL", "info")
+	LogLevel = envx.Get("LOG_LEVEL", "warn")
 
 	// ContactEmail 联系邮箱
 	ContactEmail = envx.Get("CONTACT_EMAIL", "suzh9@mail2.sysu.edu.cn")
