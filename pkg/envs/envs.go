@@ -3,6 +3,7 @@ package envs
 import (
 	"path/filepath"
 
+	"github.com/narasux/goblog/pkg/common/runmode"
 	"github.com/narasux/goblog/pkg/utils/envx"
 	"github.com/narasux/goblog/pkg/utils/pathx"
 )
@@ -17,6 +18,9 @@ var (
 
 	// ServerPort web 服务启用端口
 	ServerPort = envx.Get("SERVER_PORT", "8080")
+
+	// GinRunMode web 服务运行模式
+	GinRunMode = envx.Get("GIN_RUN_MODE", runmode.Release)
 
 	// TmplFileBaseDir
 	TmplFileBaseDir = envx.Get("TMPL_FILE_BASE_DIR", filepath.Join(pathx.GetCurPKGPath(), "../../templates"))
