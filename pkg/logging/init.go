@@ -109,7 +109,7 @@ func newJsonLogger(logType string) *logrus.Logger {
 	if err != nil {
 		level = logrus.InfoLevel
 	}
-	logrus.SetLevel(level)
+	logger.SetLevel(level)
 
 	return logger
 }
