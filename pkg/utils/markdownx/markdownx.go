@@ -9,16 +9,21 @@ import (
 	"github.com/gomarkdown/markdown/parser"
 )
 
-func ToHTML(content string) string {
+func ToHTML(content []byte) string {
 	extensions := parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock
 	p := parser.NewWithExtensions(extensions)
-	doc := p.Parse([]byte(content))
+	doc := p.Parse(content)
 
 	htmlFlags := html.CommonFlags | html.HrefTargetBlank
 	opts := html.RendererOptions{Flags: htmlFlags}
 	renderer := html.NewRenderer(opts)
 
-	return wrapTailwindClass(string(markdown.Render(doc, renderer)))
+	return wrapTailwindClass(patchMermaidClass(string(markdown.Render(doc, renderer))))
+}
+
+// gomarkdown 会把 mermaid 块转换成 <code class="language-mermaid">，这其实是不正确的，应该是 <code class="mermaid">
+func patchMermaidClass(htmlContent string) string {
+	return strings.ReplaceAll(htmlContent, "<code class=\"language-mermaid\">", "<code class=\"mermaid\">")
 }
 
 var FullMatchHtmlTagClassMap = map[string]string{
@@ -47,6 +52,7 @@ var PrefixMatchHtmlTagClassMap = map[string]string{
 // 由于 code 标签本身自带 class="language-xxx"，因此不能直接替换，只能补充
 var codeTagAdditionalClass = "p-4 rounded-xl"
 
+// wrapTailwindClass 为 markdown 转换成的 html 中的标签添加 tailwind css 类
 func wrapTailwindClass(htmlContent string) string {
 	// 完全匹配的情况
 	for tagName, class := range FullMatchHtmlTagClassMap {

@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <script src="/static/js/tailwindcss.js"></script>
     <script src="/static/js/highlight.min.js"></script>
+    <script src="/static/js/mermaid.min.js"></script>
     <title>Narasux Blogs</title>
     <link rel="stylesheet" href="/static/css/monokai-sublime.min.css" />
     <link href="/static/css/font-awesome-all.min.css" rel="stylesheet" />
@@ -41,10 +42,18 @@
       {{- template "common.footer" . }}
     </main>
     <script>
+      // 配置 Mermaid 初始化
+      mermaid.initialize({
+          startOnLoad: true
+      });
       // 替换博客文章内容（markdown 渲染成的 html）
       const articleContent = {{ .Content }};
       document.getElementById("content").innerHTML = articleContent;
       // 设置代码高亮
+      hljs.configure({
+        // 对 mermaid 代码库忽略高亮
+        noHighlightRe: /^mermaid$/
+      });
       hljs.highlightAll();
 
       // 点击按钮时执行页面滚动到顶部的操作
