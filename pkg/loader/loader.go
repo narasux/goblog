@@ -56,7 +56,7 @@ func (l *BlogLoader) loadArticleContent() error {
 		if err != nil {
 			return err
 		}
-		l.blogData.Articles[idx].Content = markdownx.ToHTML(string(content))
+		l.blogData.Articles[idx].Content = markdownx.ToHTML(content)
 	}
 	return nil
 }
