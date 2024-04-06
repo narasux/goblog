@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-cmn-Hans">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="/static/js/tailwindcss.js"></script>
+    <title>Narasux Blogs</title>
+    <link rel="icon" href="/static/image/favicon.png" type="image/x-icon" />
+  </head>
+  <body class="bg-yellow-50">
+    <main>
+      {{- template "common.header" . }}
+      <div class="flex">
+        <div class="flex-1"></div>
+        <div class="w-2/3 flex-none">
+          <div class="mx-20 my-12 text-3xl font-bold text-sky-600">
+            <a href="/articles">Articles</a>
+          </div>
+          {{ range . }}
+          <div
+            class="mx-auto mt-5 w-5/6 overflow-hidden rounded-xl bg-cyan-50 p-5 shadow-md"
+          >
+            <div class="mb-4">
+              <div class="text-xl">
+                <a
+                  class="font-mono font-semibold text-gray-600 hover:text-sky-500"
+                  href="/articles/{{ .ID }}"
+                >
+                  {{ .Title }}
+                </a>
+              </div>
+            </div>
+            <div class="flex">
+              {{- template "common.icon.date" . }}
+              <p class="ml-2 mr-4 font-mono text-gray-600">{{ .UpdatedAt }}</p>
+              {{- template "common.icon.folder" . }}
+              <a
+                class="ml-2 mr-4 font-mono text-gray-600"
+                href="/articles?category={{ .Category }}"
+              >
+                {{ .Category }}
+              </a>
+              {{- template "common.icon.tag" . }}
+              <!-- fmt off -->
+              {{ $lastIdx := sub (len .Tags) 1 }}
+              <!-- fmt off -->
+              {{ range $idx, $tag := .Tags }}
+              <a
+                class="ml-2 font-mono text-gray-600"
+                href="/articles?tag={{ . }}"
+                >{{ . }}</a
+              >
+              {{- if ne $idx $lastIdx }} , {{- end }}
+              <!-- fmt off -->
+              {{- end }}
+            </div>
+          </div>
+          {{ end }}
+        </div>
+        <div class="flex-1"></div>
+      </div>
+      {{- template "common.footer" . }}
+    </main>
+  </body>
+</html>

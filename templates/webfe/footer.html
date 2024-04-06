@@ -1,0 +1,27 @@
+{{- define "common.footer" }}
+<footer class="mt-20 bg-sky-400">
+  <div class="mx-auto flex flex-wrap justify-center">
+    <div class="p-5 font-mono text-base text-white">
+      Powered by
+      <a
+        class="m-0 hover:underline"
+        href="https://gin-gonic.com/"
+        target="_blank"
+      >
+        Gin</a
+      >
+      &
+      <a
+        class="hover:underline"
+        href="https://tailwindcss.com/"
+        target="_blank"
+      >
+        Tailwind CSS</a
+      >
+      |
+      <span class="text-xl">©</span>
+      2021-{{ curYear }} by schnee
+    </div>
+  </div>
+</footer>
+{{- end }}

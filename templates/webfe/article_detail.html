@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-cmn-Hans">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="/static/js/tailwindcss.js"></script>
+    <script src="/static/js/highlight.min.js"></script>
+    <title>Narasux Blogs</title>
+    <link rel="stylesheet" href="/static/css/monokai-sublime.min.css" />
+    <link href="/static/css/font-awesome-all.min.css" rel="stylesheet" />
+    <link rel="icon" href="/static/image/favicon.png" type="image/x-icon" />
+  </head>
+  <body class="bg-yellow-50">
+    <main>
+      {{- template "common.header" . }}
+      <div class="flex">
+        <div class="flex-1"></div>
+        <div class="w-2/3 flex-none">
+          <div class="mb-8 mt-12 flex text-3xl font-bold text-sky-600">
+            <a href="javascript:history.back()"
+              >{{- template "common.icon.go-back" . }}</a
+            >
+            <span class="ml-2 font-mono">{{ .Title }}</span>
+          </div>
+          <div
+            class="mx-auto my-5 overflow-x-auto rounded-xl bg-sky-50 px-5 shadow-md"
+          >
+            <div id="content" class="p-2 font-mono tracking-wide text-gray-700">
+              {{ .Content }}
+            </div>
+          </div>
+        </div>
+        <div class="flex-1">
+          <button
+            onclick="scrollToTop()"
+            class="fixed bottom-28 right-10 rounded-md bg-sky-500 p-3 text-white hover:bg-sky-600"
+          >
+            <i class="fa-arrow-up fas"></i>
+          </button>
+        </div>
+      </div>
+      {{- template "common.footer" . }}
+    </main>
+    <script>
+      // 替换博客文章内容（markdown 渲染成的 html）
+      const articleContent = {{ .Content }};
+      document.getElementById("content").innerHTML = articleContent;
+      // 设置代码高亮
+      hljs.highlightAll();
+
+      // 点击按钮时执行页面滚动到顶部的操作
+      function scrollToTop() {
+        window.scrollTo({top: 0, behavior: "smooth"});
+      }
+    </script>
+  </body>
+</html>
