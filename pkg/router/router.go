@@ -5,7 +5,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/narasux/goblog/pkg/common/runtime"
 	"github.com/narasux/goblog/pkg/envs"
 	"github.com/narasux/goblog/pkg/handler"
 	"github.com/narasux/goblog/pkg/middleware"
@@ -13,7 +12,7 @@ import (
 )
 
 func InitRouter() {
-	gin.SetMode(runtime.RunMode)
+	gin.SetMode(envs.GinRunMode)
 	router := gin.New()
 	_ = router.SetTrustedProxies(nil)
 
