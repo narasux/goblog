@@ -26,5 +26,5 @@ test: tidy
 	go test ./...
 
 # build docker image
-docker: tidy
+docker:
 	docker build -f ./Dockerfile -t goblog:${VERSION} --no-cache .
