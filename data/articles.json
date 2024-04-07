@@ -27,6 +27,15 @@
     "content": ""
   },
   {
+    "id": "scaling-in-kubernetes",
+    "category": "技术分享",
+    "tags": ["Kubernetes"],
+    "title": "Scaling in kubernetes",
+    "desc": "本文介绍 Kubernetes 中常见的手动或自动扩缩容的实现",
+    "updateAt": "2023-08-11",
+    "content": ""
+  },
+  {
     "id": "mapx-useful-go-map-utils",
     "category": "技术分享",
     "tags": ["Golang", "Map"],
