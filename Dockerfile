@@ -15,6 +15,8 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o goblog ./main.go
 # -------------- runner container --------------
 FROM alpine:3.19 AS runner
 
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories
+
 RUN apk --update --no-cache add bash
 
 WORKDIR /data/workspace
