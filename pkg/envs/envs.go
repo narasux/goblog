@@ -39,4 +39,7 @@ var (
 
 	// ContactEmail 联系邮箱
 	ContactEmail = envx.Get("CONTACT_EMAIL", "suzh9@mail2.sysu.edu.cn")
+
+	// RealClientIPHeaderKey Header 中真实客户端 IP 键（适用于类似 Nginx 转发的情况）为空则使用默认的 ClientIP
+	RealClientIPHeaderKey = envx.Get("REAL_CLIENT_IP_HEADER_KEY", "")
 )
