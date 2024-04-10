@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 
+	"github.com/narasux/goblog/pkg/envs"
 	"github.com/narasux/goblog/pkg/logging"
 	"github.com/narasux/goblog/pkg/utils/ginx"
 )
@@ -21,6 +22,14 @@ type bodyLogWriter struct {
 func (w bodyLogWriter) Write(b []byte) (int, error) {
 	w.body.Write(b)
 	return w.ResponseWriter.Write(b)
+}
+
+// 获取客户端 IP
+func getClientIP(c *gin.Context) string {
+	if envs.RealClientIPHeaderKey != "" {
+		return c.GetHeader(envs.RealClientIPHeaderKey)
+	}
+	return c.ClientIP()
 }
 
 func Logger() gin.HandlerFunc {
@@ -67,7 +76,7 @@ func Logger() gin.HandlerFunc {
 			"latency":   latency,
 			"requestID": ginx.GetRequestID(c),
 			"clientID":  ginx.GetClientID(c),
-			"clientIP":  c.ClientIP(),
+			"clientIP":  getClientIP(c),
 			"error":     errStr,
 		}
 

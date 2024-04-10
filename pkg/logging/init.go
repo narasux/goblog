@@ -100,8 +100,7 @@ func newJsonLogger(logType string) *logrus.Logger {
 	// 设置日志格式
 	logger.SetFormatter(&logrus.JSONFormatter{
 		TimestampFormat: time.DateTime,
-		// 虽然会占用更多存储，但是可视化比较好，先开着吧
-		PrettyPrint: true,
+		PrettyPrint:     false,
 	})
 
 	// 设置日志级别
