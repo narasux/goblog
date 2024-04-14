@@ -45,6 +45,15 @@
     "content": ""
   },
   {
+    "id": "love-and-hate-between-helm-and-k8s-crd",
+    "category": "技术分享",
+    "tags": ["Helm", "Kubernetes"],
+    "title": "Helm 与 K8s CRD 之间的爱恨情仇",
+    "desc": "本文记录一次使用 Helm 管理 K8s CRD 时候遇到的问题及深入研究的结论。",
+    "updateAt": "2023-02-03",
+    "content": ""
+  },
+  {
     "id": "bash-command-in-linux-vs-macos",
     "category": "技术分享",
     "tags": ["Bash", "Linux", "MacOS"],
