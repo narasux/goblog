@@ -45,6 +45,15 @@
     "content": ""
   },
   {
+    "id": "bash-command-in-linux-vs-macos",
+    "category": "技术分享",
+    "tags": ["Bash", "Linux", "MacOS"],
+    "title": "Bash command in Linux vs MacOS",
+    "desc": "本文介绍在 Linux 与 MacOS 系统下，同一 Bash 命令行为的一些差异。",
+    "updateAt": "2022-11-25",
+    "content": ""
+  },
+  {
     "id": "golang-memory-leak-debug",
     "category": "技术分享",
     "tags": ["Golang", "PProf"],

@@ -35,7 +35,7 @@ var FullMatchHtmlTagClassMap = map[string]string{
 	// markdown 单行 code 效果（多行另外处理）
 	"code": "bg-gray-100 text-orange-600",
 	// 使用 left-padding + left-border + bg-color 实现 markdown 引用的效果 :D
-	"blockquote": "pl-2 py-1 border-l-8 border-green-200 bg-green-100",
+	"blockquote": "mt-2 pl-2 py-1 border-l-8 border-green-200 bg-green-100",
 }
 
 var PrefixMatchHtmlTagClassMap = map[string]string{

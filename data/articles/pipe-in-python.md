@@ -2,7 +2,7 @@
 
 Pipe 在这里指 Linux 中的管道概念，常用示例如下：
 
-```shell
+```bash
 >>> tail -n 100 test.log | grep -C 5 FLAG
 ```
 
@@ -32,7 +32,7 @@ Pipe 在这里指 Linux 中的管道概念，常用示例如下：
 
 ## 常用示例
 
-```shell
+```bash
 # awk
 # 1.获取所有包含某个前缀的 Deployment
 kubectl get deployment -n default | awk '/deployment-test/{print $1}'
