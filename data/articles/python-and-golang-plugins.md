@@ -225,7 +225,7 @@ func main() {
 
 输出结果
 
-```shell
+```bash
 ~/Desktop » go run main.go
 do something
 ```
