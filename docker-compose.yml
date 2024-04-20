@@ -1,0 +1,36 @@
+# 配置参考：
+# - https://docs.docker.com/compose/compose-file/
+# - https://www.cnblogs.com/davis12/p/14312267.html
+services:
+  # 博客 web 服务
+  goblog-web:
+    image: goblog:${GOBLOG_IMAGE_TAG}
+    container_name: goblog-web
+    environment:
+      LOG_LEVEL: info
+      REAL_CLIENT_IP_HEADER_KEY: X-Real-IP
+    networks:
+      - goblog
+    ports:
+      - "8080:8080"
+    volumes:
+      - /root/narasux/goblog-logs:/data/logs/
+  # 反向代理 Nginx
+  unity-nginx:
+    image: nginx:1.25.5
+    container_name: unity-nginx
+    # 先启动 web 服务再代理
+    depends_on:
+      - goblog-web
+    networks:
+      - goblog
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /root/narasux/ssl_cert:/etc/nginx/ssl
+      - /root/narasux/nginx.conf:/etc/nginx/conf.d/default.conf
+# 所有容器共享同一网络
+networks:
+  goblog:
+    driver: bridge
