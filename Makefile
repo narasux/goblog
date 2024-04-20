@@ -19,12 +19,16 @@ tidy:
 
 # build executable binary
 build: tidy
-	go build -ldflags ${LDFLAGS} -o goblog ./main.go
+	CGO_ENABLED=0 go build -ldflags ${LDFLAGS} -o goblog ./main.go
 
 # run unittest
 test: tidy
 	go test ./...
 
 # build docker image
-docker:
-	docker build -f ./Dockerfile -t goblog:${VERSION} --no-cache .
+docker-build:
+	docker build --build-arg VERSION=${VERSION} -f ./Dockerfile -t goblog:${VERSION} --no-cache .
+
+# deploy by docker compose
+docker-deploy:
+	GOBLOG_IMAGE_TAG=${VERSION} docker compose up -d

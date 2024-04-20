@@ -10,7 +10,7 @@ RUN go env -w GOPROXY=https://goproxy.cn,direct
 
 RUN go mod download
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o goblog ./main.go
+RUN make build VERSION=$VERSION
 
 # -------------- runner container --------------
 FROM alpine:3.19 AS runner
