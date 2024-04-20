@@ -3,6 +3,8 @@ FROM golang:1.22 as builder
 
 WORKDIR /go/src/
 
+ARG VERSION
+
 COPY . .
 
 RUN go env -w GO111MODULE=on
