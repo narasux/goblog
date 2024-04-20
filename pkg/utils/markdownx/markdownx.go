@@ -36,6 +36,11 @@ var FullMatchHtmlTagClassMap = map[string]string{
 	"code": "bg-gray-100 text-orange-600",
 	// 使用 left-padding + left-border + bg-color 实现 markdown 引用的效果 :D
 	"blockquote": "mt-2 pl-2 py-1 border-l-8 border-green-200 bg-green-100",
+	// 斑马表格：奇偶数行不同背景色
+	"table": "table-auto border-collapse border border-gray-500",
+	"tr":    "odd:bg-white even:bg-gray-100",
+	"th":    "border border-gray-500 px-4 py-2",
+	"td":    "border border-gray-500 px-4 py-2",
 }
 
 var PrefixMatchHtmlTagClassMap = map[string]string{
@@ -54,13 +59,13 @@ var codeTagAdditionalClass = "p-4 rounded-xl"
 
 // wrapTailwindClass 为 markdown 转换成的 html 中的标签添加 tailwind css 类
 func wrapTailwindClass(htmlContent string) string {
-	// 完全匹配的情况
-	for tagName, class := range FullMatchHtmlTagClassMap {
-		htmlContent = strings.ReplaceAll(htmlContent, "<"+tagName+">", "<"+tagName+" class=\""+class+"\">")
-	}
 	// 前缀匹配的情况
 	for tagName, class := range PrefixMatchHtmlTagClassMap {
 		htmlContent = strings.ReplaceAll(htmlContent, "<"+tagName, "<"+tagName+" class=\""+class+"\"")
+	}
+	// 完全匹配的情况
+	for tagName, class := range FullMatchHtmlTagClassMap {
+		htmlContent = strings.ReplaceAll(htmlContent, "<"+tagName+">", "<"+tagName+" class=\""+class+"\">")
 	}
 	// 对带有 language 标识的 code 标签特殊处理
 	re := regexp.MustCompile(`<code class="language-[a-zA-Z]+`)
