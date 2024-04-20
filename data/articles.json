@@ -72,6 +72,15 @@
     "content": ""
   },
   {
+    "id": "python-security-pitfalls",
+    "category": "技术分享",
+    "tags": ["Python", "Security"],
+    "title": "Python 中的安全陷阱",
+    "desc": "本文介绍 Python 中一些容易存在安全隐患的代码写法",
+    "updateAt": "2022-04-15",
+    "content": ""
+  },
+  {
     "id": "pipe-in-python",
     "category": "技术分享",
     "tags": ["Python", "Pipe"],
