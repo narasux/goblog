@@ -29,6 +29,6 @@ test: tidy
 docker-build:
 	docker build --build-arg VERSION=${VERSION} -f ./Dockerfile -t goblog:${VERSION} --no-cache .
 
-# deploy by docker compose
+# deploy by docker compose (.env file required! lookup .env.tmpl as example)
 docker-deploy:
 	GOBLOG_IMAGE_TAG=${VERSION} docker compose up -d
