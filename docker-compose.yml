@@ -2,10 +2,31 @@
 # - https://docs.docker.com/compose/compose-file/
 # - https://www.cnblogs.com/davis12/p/14312267.html
 services:
+  # 数据存储服务（MySQL）
+  unity-mysql:
+    image: mysql:8.0.36
+    container_name: unity-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    networks:
+      - goblog
+    ports:
+      - "3306:3306"
+    volumes:
+      - ${ROOT_DIR}/mysql-data:/var/lib/mysql
   # 博客 web 服务
   goblog-web:
     image: goblog:${GOBLOG_IMAGE_TAG}
     container_name: goblog-web
+    # 等待 mysql 就绪再启动 web 服务
+    depends_on:
+      - unity-mysql
     environment:
       LOG_LEVEL: info
       REAL_CLIENT_IP_HEADER_KEY: X-Real-IP
@@ -14,7 +35,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - /root/narasux/goblog-logs:/data/logs/
+      - ${ROOT_DIR}/goblog-logs:/data/logs/
   # 反向代理 Nginx
   unity-nginx:
     image: nginx:1.25.5
@@ -28,8 +49,8 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - /root/narasux/ssl_cert:/etc/nginx/ssl
-      - /root/narasux/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ${ROOT_DIR}/ssl_cert:/etc/nginx/ssl
+      - ${ROOT_DIR}/nginx.conf:/etc/nginx/conf.d/default.conf
 # 所有容器共享同一网络
 networks:
   goblog:

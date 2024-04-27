@@ -110,7 +110,7 @@ def sync_tenant(task_id: int):
 
 但是显然，task 是先创建的，然后才能把 task_id 给到 celery task，之后再去 get，为什么会 not found 呢？
 
-# 是事务！我加了事务
+# 是事务！我加了事务！
 
 在事务范围内，`TenantSyncTask.objects.create` 后 `get` 是可以正常完成的，但是 celery 任务是在事务外执行的（不是同进程了都）
 
