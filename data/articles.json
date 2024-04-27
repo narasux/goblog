@@ -45,6 +45,15 @@
     "content": ""
   },
   {
+    "id": "share-k8s-cluster-by-vcluster",
+    "category": "技术分享",
+    "tags": ["Kubernetes"],
+    "title": "K8s 集群资源共享之 vcluster",
+    "desc": "本文简单地介绍在 k8s 集群中运行的集群 vcluster，其主要用于实现集群资源的共享与隔离。",
+    "updateAt": "2023-02-14",
+    "content": ""
+  },
+  {
     "id": "love-and-hate-between-helm-and-k8s-crd",
     "category": "技术分享",
     "tags": ["Helm", "Kubernetes"],
