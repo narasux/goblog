@@ -13,7 +13,10 @@ import (
 )
 
 func GetHomePage(c *gin.Context) {
-	c.HTML(http.StatusOK, "index.html", nil)
+	c.HTML(http.StatusOK, "index.html", map[string]string{
+		"googleSiteVerificationCode": envs.GoogleSiteVerificationCode,
+		"baiduSiteVerificationCode":  envs.BaiduSiteVerificationCode,
+	})
 }
 
 func ListArticles(c *gin.Context) {

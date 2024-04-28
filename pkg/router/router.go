@@ -29,6 +29,8 @@ func InitRouter() {
 	router.LoadHTMLGlob(envs.TmplFileBaseDir + "/webfe/*")
 	// 404
 	router.NoRoute(handler.Get404)
+	// robots.txt
+	router.GET("robots.txt", handler.GetRobotsTxt)
 
 	// 注册路由
 	webfeRg := router.Group("")

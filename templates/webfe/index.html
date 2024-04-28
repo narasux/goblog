@@ -2,6 +2,13 @@
 <html lang="zh-cmn-Hans">
   <head>
     <meta charset="UTF-8" />
+    <!-- MyGo! MyGo! -->
+    {{- if .googleSiteVerificationCode }}
+    <meta name="google-site-verification" content="{{ .googleSiteVerificationCode }}" />
+    {{- end }}
+    {{- if .baiduSiteVerificationCode }}
+    <meta name="baidu-site-verification" content="{{ .baiduSiteVerificationCode }}" />
+    {{- end }}
     <script src="/static/js/tailwindcss.js"></script>
     <title>Narasux</title>
     <link rel="icon" href="/static/image/favicon.png" type="image/x-icon" />
