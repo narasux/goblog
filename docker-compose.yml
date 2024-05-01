@@ -30,6 +30,13 @@ services:
     environment:
       LOG_LEVEL: info
       REAL_CLIENT_IP_HEADER_KEY: X-Real-IP
+      GOOGLE_SITE_VERIFICATION_CODE: ${GOOGLE_SITE_VERIFICATION_CODE}
+      BAIDU_SITE_VERIFICATION_CODE: ${BAIDU_SITE_VERIFICATION_CODE}
+      MYSQL_HOST: unity-mysql
+      MYSQL_PORT: "3306"
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     networks:
       - goblog
     ports:
