@@ -27,7 +27,7 @@ test: tidy
 
 # build docker image
 docker-build:
-	docker build --build-arg VERSION=${VERSION} -f ./Dockerfile -t goblog:${VERSION} --no-cache .
+	docker build --build-arg VERSION=${VERSION} -f ./Dockerfile -t goblog:${VERSION} .
 
 # deploy by docker compose (.env file required! lookup .env.tmpl as example)
 docker-deploy:
