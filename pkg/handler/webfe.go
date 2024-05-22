@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -37,7 +38,10 @@ func RetrieveArticle(c *gin.Context) {
 		Get404(c)
 		return
 	}
-	c.HTML(http.StatusOK, "article_detail.html", article)
+	c.HTML(http.StatusOK, "article_detail.html", map[string]any{
+		"article":         article,
+		"mermaidRequired": strings.Contains(article.Content, "mermaid"),
+	})
 }
 
 func GetRSS(c *gin.Context) {
