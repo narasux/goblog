@@ -23,13 +23,16 @@
             <a href="javascript:history.back()"
               >{{- template "common.icon.go-back" . }}</a
             >
-            <span class="ml-2 font-mono">{{ .Title }}</span>
+            <span class="ml-2 font-mono">{{ .article.Title }}</span>
           </div>
-          <div
-            class="mx-auto my-5 overflow-x-auto rounded-xl bg-sky-50 px-5 shadow-md"
-          >
-            <div id="content" class="p-2 font-mono tracking-wide text-gray-700">
+          <div class="mx-auto my-5 overflow-x-auto rounded-xl bg-sky-50 px-5 shadow-md">
+            <div id="content" class="p-2 font-mono tracking-wide text-gray-700 relaxed">
               {{ .article.Content }}
+            </div>
+          </div>
+          <div class="mx-auto my-5 overflow-x-auto rounded-xl bg-sky-50 px-5 shadow-md">
+            <div class="mx-auto my-10 font-mono text-gray-700 flex flex-wrap justify-center">
+              🚀 评论功能开发中～
             </div>
           </div>
         </div>

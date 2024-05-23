@@ -1,5 +1,14 @@
 [
   {
+    "id": "passwd-strength-evaluate-util-zxcvbn",
+    "category": "技术分享",
+    "tags": ["Python", "Password"],
+    "title": "密码强度评估工具：zxcvbn",
+    "desc": "本文介绍 zxcvbn 对密码进行强度评估的原理与实现",
+    "updateAt": "2024-05-23",
+    "content": ""
+  },
+  {
     "id": "python-and-golang-plugins",
     "category": "技术分享",
     "tags": ["Python", "Golang", "Plugin"],
