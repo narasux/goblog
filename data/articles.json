@@ -1,5 +1,14 @@
 [
   {
+    "id": "phone-ran-away-from-home-for-one-day",
+    "category": "生活点滴",
+    "tags": ["Phone"],
+    "title": "手机离家出走的一天",
+    "desc": "本文介绍手机遗失导致一天 “无机” 生活的经历",
+    "updateAt": "2024-07-03",
+    "content": ""
+  },
+  {
     "id": "passwd-strength-evaluate-util-zxcvbn",
     "category": "技术分享",
     "tags": ["Python", "Password"],
