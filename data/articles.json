@@ -1,5 +1,14 @@
 [
   {
+    "id": "debug-in-django-3-2-to-4-2",
+    "category": "技术分享",
+    "tags": ["Django", "Python"],
+    "title": "记：Django 升级 Bug 排查（3.2 -> 4.2）",
+    "desc": "本文介绍升级 Django 时遇到 Bug 的排查过程",
+    "updateAt": "2024-10-27",
+    "content": ""
+  },
+  {
     "id": "phone-ran-away-from-home-for-one-day",
     "category": "生活点滴",
     "tags": ["Phone"],
