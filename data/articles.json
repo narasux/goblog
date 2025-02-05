@@ -1,5 +1,14 @@
 [
   {
+    "id": "k8s-feature-summary",
+    "category": "技术分享",
+    "tags": ["Kubernetes"],
+    "title": "Kubernetes 特性拾遗",
+    "desc": "本文对 k8s 版本功能特性进行简单总结",
+    "updateAt": "2025-02-03",
+    "content": ""
+  },
+  {
     "id": "debug-in-django-3-2-to-4-2",
     "category": "技术分享",
     "tags": ["Django", "Python"],
