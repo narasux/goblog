@@ -48,15 +48,21 @@ v1.20 版本就达到了 GA 标准。
 # Alpha
 apiVersion: paas.bk.tencent.com/v1alpha2
 kind: BkApp
+```
 
+```yaml
 # Beta
 apiVersion: batch/v1beta1
 kind: CronJob
+```
 
+```yaml
 # 官方的 beta 曾经会放到 extensions 这个 groups 中
 apiVersion: extensions/v1beta1
 kind: Deployment
+```
 
+```yaml
 # GA
 apiVersion: apps/v1
 kind: Deployment 
@@ -78,16 +84,15 @@ kind: Deployment
 
 ### k8s v1.21
 
-#### CronJobs（GA）
+#### CronJobs（v1.21 GA (Current), v1.5 Alpha, v1.8 Beta）
 
 CronJobs 用于执行定期安排的操作，例如备份、生成报告等，开发者可以定义该间隔内作业应开始的时间点，并按照间隔不断执行。
 
-注：在 v1.21 中 CronJob
-默认使用性能更好的 [CronJobControllerV2](https://kubernetes.io/blog/2021/04/09/kubernetes-release-1.21-cronjob-ga/#performance-impact)。
+注：在 v1.21 中 CronJob 默认使用性能更好的 [CronJobControllerV2](https://kubernetes.io/blog/2021/04/09/kubernetes-release-1.21-cronjob-ga/#performance-impact)。
 
 > https://kubernetes.io/blog/2021/04/09/kubernetes-release-1.21-cronjob-ga/
 
-#### Job 支持暂停（Alpha，v1.24 GA）
+#### Job 支持暂停（v1.21 Alpha (Current), v1.22 Beta, v1.24 GA）
 
 通过设置 `.spec.suspend` 为 `true` 实现，可能的使用场景：
 
@@ -96,13 +101,11 @@ CronJobs 用于执行定期安排的操作，例如备份、生成报告等，�
 
 > https://kubernetes.io/blog/2021/04/12/introducing-suspended-jobs/
 
-#### 带索引的 Job（Alpha，v1.24 GA）
+#### 带索引的 Job（v1.21 Alpha (Current), v1.22 Beta, v1.24 GA）
 
 Job 默认是 `NonIndexed` 的，也就是说，Job Pod 应该被是为完全一致的，这样在分块处理数据时候不够方便。
 
-k8s 1.21 中引入 Index Job 的概念，具体表现为将 `spec.completionMode` 设置为 `Indexed`
-后，可以在注解 `batch.kubernetes.io/job-completion-index` 或环境变量 `JOB_COMPLETION_INDEX` 中获取到当前 Pod 的
-Index，范围为：`[0, N)`。
+k8s 1.21 中引入 Index Job 的概念，具体表现为将 `spec.completionMode` 设置为 `Indexed` 后，可以在注解 `batch.kubernetes.io/job-completion-index` 或环境变量 `JOB_COMPLETION_INDEX` 中获取到当前 Pod 的 Index，范围为：`[0, N)`。
 
 注：index job 的 Pod 名称中也会包含当前 Pod 的 Index。
 
@@ -131,7 +134,7 @@ spec:
 
 ### k8s v1.22
 
-#### Server-side Apply（GA）
+#### Server-side Apply（v1.22 GA (Current), v1.16 Beta）
 
 ```shell
 kubectl apply --server-side [--dry-run=server]
@@ -159,13 +162,13 @@ Kubernetes v1.22 中通过引入 cgroups v2 来提供了一个 alpha 特性，�
 >
 > https://kubernetes.io/blog/2021/08/09/run-nodes-with-swap-alpha/
 
-#### StatefulSets 支持 minReadySeconds（Alpha，v1.25 GA）
+#### StatefulSets 支持 minReadySeconds（v1.22 Alpha (Current), v1.23 Beta, v1.25 GA）
 
 在某些场景下，sts 的 Pod ready 不代表就能够提供服务，需要设置 `.spec.minReadySeconds` 来确保 sts 的 Pod 准备就绪（强制等待）。
 
 > https://kubernetes.io/blog/2021/08/27/minreadyseconds-statefulsets/
 
-#### PodSecurity Admission（Alpha, v1.23 Beta）
+#### PodSecurity Admission（v1.22 Alpha (Current), v1.23 Beta）
 
 `PodSecurity Admission` 是在 k8s v1.21 中被废弃的 `Pod Security Policies` 的替代品。
 
@@ -271,7 +274,7 @@ spec:
 
 > https://kubernetes.io/zh-cn/docs/reference/kubernetes-api/workload-resources/horizontal-pod-autoscaler-v2/
 
-#### 支持 gRPC 探针（Alpha，v1.27 GA）
+#### 支持 gRPC 探针（v1.23 Alpha (Current), v1.24 Beta, v1.27 GA）
 
 ```yaml
 readinessProbe:
@@ -282,7 +285,7 @@ readinessProbe:
   periodSeconds: 10
 ```
 
-#### CRD Validation 支持表达式（Alpha，v1.25 Beta）
+#### CRD Validation 支持表达式（v1.23 Alpha (Current), v1.25 Beta, v1.29 GA）
 
 规则定义：[Common Expression Language (CEL)](https://github.com/google/cel-spec)，通过 `x-kubernetes-validation-rules` 字段配置校验规则。
 
@@ -312,12 +315,12 @@ openAPIV3Schema:
 
 一些常见的验证规则：
 
-| rule                                   | effect                                             |
-| -------------------------------------- | -------------------------------------------------- |
-| self.minReplicas <= self.replicas      | 整数字段小于或等于另一个整数字段                   |
-| 'Available' in self.stateCounts        | Map 中是否存在具有 “Available” 键的条目            |
-| self.set1.all(e, !(e in self.set2))    | 两个集合的元素是否不相交                           |
-| self == oldSelf                        | 必填字段一旦设置便不可改变                         |
+| rule                                   | effect                           |
+|----------------------------------------|----------------------------------|
+| self.minReplicas <= self.replicas      | 整数字段小于或等于另一个整数字段                 |
+| 'Available' in self.stateCounts        | Map 中是否存在具有 “Available” 键的条目     |
+| self.set1.all(e, !(e in self.set2))    | 两个集合的元素是否不相交                     |
+| self == oldSelf                        | 必填字段一旦设置便不可改变                    |
 | self.created + self.ttl < self.expired | “过期” 日期是否晚于 “创建” 日期加上 “ttl” 持续时间 |
 
 > https://github.com/kubernetes/enhancements/blob/master/keps/sig-api-machinery/2876-crd-validation-expression-language/README.md
@@ -377,7 +380,7 @@ spec:
 
 > https://kubernetes.io/blog/2022/05/05/volume-expansion-ga/
 
-#### StatefulSet 的最大不可用副本数（Alpha，v1.25 Beta）
+#### StatefulSet 的最大不可用副本数（v1.24 Alpha (Current), v1.25 Beta）
 
 StatefulSet 有两种 Pod 管理策略：
 
@@ -402,8 +405,8 @@ cgroup v2 相对于 cgroup v1 有几项改进，例如：
 - 更安全的子树委托给容器
 - 压力失速信息等新功能
 - 增强资源分配管理和跨多个资源的隔离
-  - 对不同类型的内存分配（网络和内核内存等）进行统一核算
-  - 考虑非即时资源变化，例如页面缓存写回
+    - 对不同类型的内存分配（网络和内核内存等）进行统一核算
+    - 考虑非即时资源变化，例如页面缓存写回
 
 某些 Kubernetes 功能专门使用 cgroup v2 来增强资源管理和隔离。
 
@@ -465,7 +468,7 @@ kubectl debug my-pod -it --image=busybox --target=my-container -- sh
 
 ### k8s v1.26
 
-#### Pod scheduling gates（Alpha，v1.27 Beta，v1.30 GA）
+#### Pod scheduling gates（Alpha (Current), v1.27 Beta, v1.30 GA）
 
 创建 Pod 后，调度程序会不断尝试寻找适合该 Pod 的节点。此无限循环将持续进行，直到调度程序找到适合该 Pod 的节点，或者该 Pod 被删除。
 
@@ -483,6 +486,207 @@ test-pod   0/1     SchedulingGated   0          10s
 使用场景：集群资源配额不足，需要控制运行中的 Pod 数量，此时可以有 webhook 为同时创建的大量 Pod 添加 Scheduling Gates，并在有资源空闲的情况下逐步恢复 Pod 的调度（与 Job 的 suspend 效果类似）。
 
 > https://kubernetes.io/blog/2022/12/26/pod-scheduling-readiness-alpha/
+
+### k8s v1.27
+
+#### PersistentVolumes 单 Pod 访问模式（v1.27 Beta (Current), v1.22 Alpha, v1.29 GA）
+
+ReadWriteOncePod 访问模式可让您将卷访问限制到集群中的单个 Pod，从而确保一次只有一个 Pod 可以写入卷，这对于需要单写入者访问存储的有状态工作负载特别有用。
+
+注意：ReadWriteOncePod 仅支持 CSI 卷且需要依赖较高版本的 CSI sidecar。
+
+```yaml
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: single-writer-only
+spec:
+  accessModes:
+    - ReadWriteOncePod # Allow only a single pod to access single-writer-only.
+  resources:
+    requests:
+      storage: 1Gi
+```
+
+其他几种 AccessModes:
+
+- ReadWriteOnce：该卷可由单个节点以读写方式安装
+- ReadOnlyMany：许多节点可以以只读方式安装该卷
+- ReadWriteMany：该卷可由多个节点以读写方式安装
+
+> https://kubernetes.io/blog/2023/04/20/read-write-once-pod-access-mode-beta/
+> 
+> https://kubernetes.io/blog/2021/09/13/read-write-once-pod-access-mode-alpha/#what-are-access-modes-and-why-are-they-important
+
+#### Pod 资源原地调整（v1.27 Alpha (Current)）
+
+在较低版本的 k8s 中，是无法调整运行中的 Pod 的容器资源（CPU/内存）的，只能通过重建 Pod 进行修改，这可能对运行中的服务造成一定的影响。
+
+在 v1.27 中，k8s 增加了 Pod 的原地调整功能，可以直接对运行中的 Pod 进行调整（kubectl edit / patch resources），且无需重建 Pod。
+
+由于 spec 中容器 `resources` 字段允许被修改，因此 k8s 在 `containerStatuses` 中新增 `allocatedResources` 字段，表示目前 **实际**分配给 Pod 中各容器的节点资源情况。
+
+除此此外，`containerStatuses` 中新增名为 `resources` 字段，反映容器运行时所报告的，正在运行的容器上配置的资源请求和限制（`spec` 中的 `resources` 不一定已经生效）。
+
+最后，Pod 状态中还新增了一个 `resize` 字段，用于显示最近一次资源调整状态：
+
+- Proposed：对请求的资源调整的确认，表明该请求已通过验证并记录。
+- InProgress：值表示节点已接受资源调整请求，并且正在将该请求应用到 Pod 的容器上。
+- Deferred：当前无法批准所请求的资源调整，节点将持续重试直到有足够的资源。
+- Infeasible：节点无法满足所请求的资源调整，比如 Pod 要求的资源超过单节点上限。
+
+> https://kubernetes.io/blog/2023/05/12/in-place-pod-resize-alpha/
+
+### k8s v1.28
+
+#### 原生 Sidecar 容器（v1.28 Alpha (Current), v1.29 Beta, v1.33 GA）
+
+Kubernetes 1.28 向 init 容器添加了一个新字段：`restartPolicy`：
+
+```yaml
+apiVersion: v1
+kind: Pod
+spec:
+  initContainers:
+  - name: secret-fetch
+    image: secret-fetch:1.0
+  - name: network-proxy
+    image: network-proxy:1.0
+    restartPolicy: Always
+  containers: [...]
+```
+
+此字段是可选的，如果设置，则唯一有效值为 Always，启用后有如下变化：
+
+- 如果 init 容器退出，则重新启动（普通的 init 容器会执行完后退出）
+- 任何后续的 init 容器在 startupProbe 成功完成后立即启动，而不是等待 sidecar 容器退出
+- 由于可重启的 init 容器资源现在被添加到主容器的资源请求总和中，因此 Pod 的资源使用量计算发生了变化
+- Pod 终止仍然仅取决于主容器，原生 sidecar 容器不会阻止 Pod 的退出
+
+相比较于 sidecar 和主容器一起放 `containers` 中的优势：1. 提供启动顺序的控制（确保 sidecar 先启动），2. 不阻止 Pod 终止
+
+碎碎念：非得用 initContainers 这个字段么，感觉可能会有歧义 :）
+
+> https://kubernetes.io/blog/2023/08/25/native-sidecar-containers/
+
+### k8s v1.29
+
+v1.29 中的新功能（Alpha）主要是底层的一些改进（或者是对 windows 系统的支持），和具体的应用关系不大，跳过。
+
+不过还是有挺多功能在这个版本变成 Beta / GA，比如：CRD Validation 表达式，原生 Sidecar 容器等等。
+
+### k8s v1.30
+
+#### ValidatingAdmissionPolicy （v1.30 GA (Current), v1.24 Alpha, v1.28 Beta）
+
+ValidatingAdmissionPolicy 是 AdmissionWebhook 的替代方案，以下两段配置是等价的：
+
+```go
+func verifyDeployment(deploy *appsv1.Deployment) error {
+	var errs []error
+	for i, c := range deploy.Spec.Template.Spec.Containers {
+		if c.Name == "" {
+			return fmt.Errorf("container %d has no name", i)
+		}
+		if c.SecurityContext == nil {
+			errs = append(errs, fmt.Errorf("container %q does not have SecurityContext", c.Name))
+		}
+		if c.SecurityContext.RunAsNonRoot == nil || !*c.SecurityContext.RunAsNonRoot {
+			errs = append(errs, fmt.Errorf("container %q must set RunAsNonRoot to true in its SecurityContext", c.Name))
+		}
+		if c.SecurityContext.ReadOnlyRootFilesystem == nil || !*c.SecurityContext.ReadOnlyRootFilesystem {
+			errs = append(errs, fmt.Errorf("container %q must set ReadOnlyRootFilesystem to true in its SecurityContext", c.Name))
+		}
+		if c.SecurityContext.AllowPrivilegeEscalation != nil && *c.SecurityContext.AllowPrivilegeEscalation {
+			errs = append(errs, fmt.Errorf("container %q must NOT set AllowPrivilegeEscalation to true in its SecurityContext", c.Name))
+		}
+		if c.SecurityContext.Privileged != nil && *c.SecurityContext.Privileged {
+			errs = append(errs, fmt.Errorf("container %q must NOT set Privileged to true in its SecurityContext", c.Name))
+		}
+	}
+	return errors.NewAggregate(errs)
+}
+```
+
+```yaml
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: "pod-security.policy.example.com"
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+    - apiGroups:   ["apps"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["deployments"]
+  # 变量
+  variables:
+  - name: containers
+    expression: object.spec.template.spec.containers
+  - name: securityContexts
+    expression: 'variables.containers.map(c, c.?securityContext)'
+  # 表达式
+  validations:
+  - expression: variables.securityContexts.all(c, c.?runAsNonRoot == optional.of(true))
+    message: 'all containers must set runAsNonRoot to true'
+  - expression: variables.securityContexts.all(c, c.?readOnlyRootFilesystem == optional.of(true))
+    message: 'all containers must set readOnlyRootFilesystem to true'
+  - expression: variables.securityContexts.all(c, c.?allowPrivilegeEscalation != optional.of(true))
+    message: 'all containers must NOT set allowPrivilegeEscalation to true'
+  - expression: variables.securityContexts.all(c, c.?privileged != optional.of(true))
+    message: 'all containers must NOT set privileged to true'
+```
+
+需要注意的是：创建 `ValidatingAdmissionPolicy` 后，还得通过 `ValidatingAdmissionPolicyBinding` 绑定到具体的一批 k8s 资源上：
+
+```yaml
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: "pod-security.policy-binding.example.com"
+spec:
+  policyName: "pod-security.policy.example.com"
+  validationActions: ["Warn"]
+  matchResources:
+    namespaceSelector:
+      matchLabels:
+        "kubernetes.io/metadata.name": "policy-test"
+```
+
+> https://kubernetes.io/blog/2024/04/24/validating-admission-policy-ga/
+
+#### 只读卷挂载变成真的只读（v1.30 Alpha (current), v1.31 Beta）
+
+在 k8s 中，指定 `volumeMounts` 中的 `readOnly` 为 `true`，只能限制到挂在的目录，比如下面这个例子中的 `/mnt/*`，而它的子目录其实是没法限制的，也就是说 `/mnt/my-nfs-server/*` 还是可以写入的：
+
+```yaml
+apiVersion: v1
+kind: Pod
+spec:
+  volumes:
+    - name: mnt
+      hostPath:
+        path: /mnt
+  containers:
+    - volumeMounts:
+      - name: mnt
+        mountPath: /mnt
+        readOnly: true
+```
+
+在 v1.30 版本并开启特性的 featureGate 后，可以在 `readOnly` 为 `true` 的前提下，设置 `recursiveReadOnly` 为 `Enabled` 以限制子目录为只读：
+
+```yaml
+readOnly: true
+# NEW
+# Possible values are `Enabled`, `IfPossible`, and `Disabled`.
+# Needs to be specified in conjunction with `readOnly: true`.
+recursiveReadOnly: Enabled
+```
+
+> https://kubernetes.io/blog/2024/04/23/recursive-read-only-mounts/
 
 ## Kubernetes Logo 彩蛋
 
@@ -535,6 +739,10 @@ Kubernetes 由全球数千名志愿者无偿构建，他们因兴趣、学习或
 v1.30 版本命名为 Uwubernetes（融合“Kubernetes”与表情符号“UwU”），象征社区的奇特，可爱与快乐。
 
 这一设计致敬所有贡献者，感谢他们让集群稳定运行，并传递内外交融的独特热情。
+
+## 挖个坑吧
+
+k8s 目前有个新的网络管理资源 Gateway，是 Ingress 的进阶方案，有更强灵活性 & 可扩展性，可以满足更复杂的网络治理需求，后续可以研究下，争取再写个博客。
 
 ## 参考资料
 
