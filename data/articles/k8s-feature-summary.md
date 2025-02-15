@@ -211,17 +211,19 @@ kubectl label ns custom podsecurity.kubernetes.io/enforce=restricted
 > https://kubernetes.io/docs/concepts/security/pod-security-admission/
 >
 > https://kubernetes.io/docs/concepts/security/pod-security-standards/
-> 
+>
 > https://kubernetes.io/blog/2021/12/09/pod-security-admission-beta/
+>
+> https://kubernetes.io/blog/2022/08/23/podsecuritypolicy-the-historical-context/
 
 ### k8s v1.23
 
 #### IPv4/IPv6 双栈（GA）
 
-在配置双栈网络时，需要同时指定 `--node-cidr-mask-size-ipv4` 和 `--node-cidr-mask-size-ipv6` 以便于设置每个 Node 上的子网大小（之前只需要设置 --node-cidr-mask-size）。
+在配置双栈网络时，需要同时指定 `--node-cidr-mask-size-ipv4` 和 `--node-cidr-mask-size-ipv6` 以便于设置每个 Node 上的子网大小（之前只需要设置 `--node-cidr-mask-size`）。
 
 > https://kubernetes.io/blog/2021/12/08/dual-stack-networking-ga/
-> 
+>
 > https://github.com/kubernetes/enhancements/tree/master/keps/sig-network/563-dual-stack
 
 #### IngressClass 支持 namespace 级别的参数（GA）
@@ -258,7 +260,7 @@ spec:
 ```
 
 > https://github.com/kubernetes/enhancements/tree/master/keps/sig-network/2365-ingressclass-namespaced-params
-> 
+>
 > https://kubernetes.io/zh-cn/docs/reference/kubernetes-api/service-resources/ingress-class-v1/#IngressClassSpec
 
 #### HPA v2（GA）
@@ -308,9 +310,23 @@ openAPIV3Schema:
         - maxReplicas 
 ```
 
+一些常见的验证规则：
+
+| rule                                   | effect                                             |
+| -------------------------------------- | -------------------------------------------------- |
+| self.minReplicas <= self.replicas      | 整数字段小于或等于另一个整数字段                   |
+| 'Available' in self.stateCounts        | Map 中是否存在具有 “Available” 键的条目            |
+| self.set1.all(e, !(e in self.set2))    | 两个集合的元素是否不相交                           |
+| self == oldSelf                        | 必填字段一旦设置便不可改变                         |
+| self.created + self.ttl < self.expired | “过期” 日期是否晚于 “创建” 日期加上 “ttl” 持续时间 |
+
 > https://github.com/kubernetes/enhancements/blob/master/keps/sig-api-machinery/2876-crd-validation-expression-language/README.md
-> 
+>
 > https://kubernetes.io/blog/2022/09/23/crd-validation-rules-beta/
+>
+> https://kubernetes.io/blog/2022/09/29/enforce-immutability-using-cel/
+>
+> https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#validation-rules
 
 #### 通用临时卷（GA）
 
@@ -320,14 +336,221 @@ openAPIV3Schema:
 
 > https://github.com/kubernetes/enhancements/blob/master/keps/sig-storage/1698-generic-ephemeral-volumes/README.md
 
-## 小彩蛋
+### k8s v1.24
 
-与 MacOS 一样，k8s 的每次大版本发布都有新的名字 & Logo，在 Release Note 中会说明 Logo 的设计理念，还是挺有创意的。
+#### 完全移除 DockerShim
+
+Docker 作为底层运行时已被弃用，取而代之的是使用为 Kubernetes 创建的容器运行时接口 (CRI) 的运行时，但 Docker 生成的容器镜像依旧可用。
+
+> https://kubernetes.io/blog/2022/05/03/dockershim-historical-context/
+>
+> https://kubernetes.io/blog/2020/12/02/dont-panic-kubernetes-and-docker/
+>
+> https://kubernetes.io/blog/2022/02/17/dockershim-faq/
+
+#### OpenAPI v3
+
+Kubernetes 1.24 提供以 OpenAPI v3 格式发布其 API 的测试版支持，同理 CRD 也可以通过 OpenAPI v3 的格式定义。
+
+#### 卷容量扩展（GA）
+
+此功能允许 Kubernetes 用户简单地编辑他们的 `PersistentVolumeClaim` 对象并在 `spec` 中指定新的大小。
+
+Kubernetes 将自动使用存储后端扩展卷，并扩展 Pod 正在使用的底层文件系统，如果可能的话，根本不需要任何停机时间。
+
+```yaml
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: myclaim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi  # 修改为新容量
+```
+
+但是，并非每种卷类型都默认可扩展，某些卷类型（如 `hostPath`）根本不可扩展。
+
+对于 CSI 卷来说，则要求 CSI 驱动程序必须具有 `EXPAND_VOLUME` 功能的控制器或其他条件。
+
+> https://kubernetes.io/blog/2022/05/05/volume-expansion-ga/
+
+#### StatefulSet 的最大不可用副本数（Alpha，v1.25 Beta）
+
+StatefulSet 有两种 Pod 管理策略：
+
+- OrderedReady：严格保证 Pod 顺序（新建时从 0 -> N-1，缩容时从 N-1 -> 0 **逐个**变更）
+- Parallel: 每个 Pod 都是独立的，可以同时创建 / 缩容删除
+
+在 v1.24 中，StatefulSet 指定策略为 OrderedReady 时，可以配置 `spec.updateStrategy.rollingUpdate.maxUnavailable` (默认值为 1，即与原来的相同）以允许同时变更多个 Pod（但依旧按原先的顺序）。
+
+> https://kubernetes.io/blog/2022/05/27/maxunavailable-for-statefulset/
+
+### k8s v1.25
+
+#### cgroup v2 (GA)
+
+cgroup v2 是 Linux cgroup API 的最新版本，其提供了统一的控制系统，增强了资源管理功能。
+
+许多最新版本的 Linux 发行版已默认切换到 cgroup v2，因此 Kubernetes 在这些新更新的发行版上继续运行良好非常重要。
+
+cgroup v2 相对于 cgroup v1 有几项改进，例如：
+
+- API 中单一统一的层次结构设计
+- 更安全的子树委托给容器
+- 压力失速信息等新功能
+- 增强资源分配管理和跨多个资源的隔离
+  - 对不同类型的内存分配（网络和内核内存等）进行统一核算
+  - 考虑非即时资源变化，例如页面缓存写回
+
+某些 Kubernetes 功能专门使用 cgroup v2 来增强资源管理和隔离。
+
+例如：
+
+- MemoryQoS 功能可提高内存利用率，并依赖 cgroup v2 功能来实现此功能。
+- kubelet 中的新资源管理功能也将利用新的 cgroup v2 功能。
+
+注意：k8s 使用 cgroup v2 的前提条件：
+
+- Linux 内核 >= 5.8 & 启用 cgroup v2
+- 容器运行时支持 cgroup v2（如：containerd v1.4+）
+- kubelet 和容器运行时配置为使用 `systemd cgroup` 驱动程序
+
+> https://kubernetes.io/blog/2022/08/31/cgroupv2-ga-1-25/
+
+#### 临时容器（GA）
+
+临时容器是一种特殊的，在已经存在的 Pod 中临时运行的容器，通常用于测试和排查问题的目的，可避免重新构建服务 / 启动 Pod。
+
+临时容器并非为承载服务而设计，因此无法配置端口，容器探针，资源配额等功能，也不会自动重启。
+
+特性：
+
+- 共享命名空间：临时容器与目标容器共享网络、进程、IPC 等命名空间
+- 生命周期：临时容器随 Pod 终止而销毁，但不会触发 Pod 重启
+- 资源限制：可以定义 CPU/内存限制（需在 ephemeralContainers 字段中配置）
+
+使用场景
+
+- 调试崩溃的容器：当主容器因崩溃无法执行 kubectl exec 时，通过临时容器检查日志或进程
+- 网络诊断：使用 nicolaka/netshoot 镜像执行网络排查（如 tcpdump、curl）
+- 动态注入工具：临时加载性能分析工具（如 strace、perf）
+
+使用实例（kubectl）：
+
+```shell
+# 语法
+kubectl debug <pod-name> -it --image=<debug-image> --target=<container-name> -- <command>
+
+# 示例：附加一个 busybox 临时容器到名为 "my-pod" 的 Pod
+kubectl debug my-pod -it --image=busybox --target=my-container -- sh
+```
+
+参数说明：
+
+- `-it`：以交互模式附加到容器。
+- `--image`：指定临时容器的镜像（需包含调试工具，如 busybox、nicolaka/netshoot）。
+- `--target`：指定目标容器名称（共享其命名空间，如网络、进程）。
+- `--`：后续为要在临时容器中执行的命令（如 sh、bash）。
+
+注意：临时容器创建后，无法手动删除，只能通过重建 Pod 的方式进行删除。
+
+> https://kubernetes.io/docs/concepts/workloads/pods/ephemeral-containers/
+>
+> https://kubernetes.io/docs/tasks/debug/debug-application/debug-running-pod/#ephemeral-container
+>
+> https://kubernetes.io/docs/tasks/configure-pod-container/share-process-namespace/
+
+### k8s v1.26
+
+#### Pod scheduling gates（Alpha，v1.27 Beta，v1.30 GA）
+
+创建 Pod 后，调度程序会不断尝试寻找适合该 Pod 的节点。此无限循环将持续进行，直到调度程序找到适合该 Pod 的节点，或者该 Pod 被删除。
+
+长时间无法调度的 Pod（例如，因某些外部事件而被阻止的 Pod）会浪费调度周期，大量无法成功调度的 Pod 可能会影响到整个集群的性能。
+
+在 v1.26 中，Kubernetes 增加了 Pod scheduling gates，可以在调度 Pod 之前检查一些条件，如果满足条件则允许调度，否则不会调度该 Pod。
+
+其与 Finalizer 非常相似，具有非空 `spec.schedulingGates` 字段的 Pod 将显示为状态 `SchedulingGated` 并被阻止调度。
+
+```shell
+NAME       READY   STATUS            RESTARTS   AGE
+test-pod   0/1     SchedulingGated   0          10s
+```
+
+使用场景：集群资源配额不足，需要控制运行中的 Pod 数量，此时可以有 webhook 为同时创建的大量 Pod 添加 Scheduling Gates，并在有资源空闲的情况下逐步恢复 Pod 的调度（与 Job 的 suspend 效果类似）。
+
+> https://kubernetes.io/blog/2022/12/26/pod-scheduling-readiness-alpha/
+
+## Kubernetes Logo 彩蛋
+
+与 MacOS 一样，k8s 的每次大版本发布都有新的名字 & Logo，在 Release Note 中会说明 Logo 的设计理念：
+
+![img](/static/image/blog/k8s-logo.png)
+
+### v1.22: Reaching New Peaks
+
+在持续的疫情、自然灾害和无处不在的倦怠阴影中，Kubernetes 1.22 版本包含 53 项增强功能。这使其成为迄今为止最大的版本。
+
+这一成就的实现完全归功于辛勤工作和充满热情的发布团队成员以及 Kubernetes 生态系统的杰出贡献者。
+
+发布 Logo 提醒我们继续实现新的里程碑并创造新的记录。它献给所有发布团队成员、贡献者和观星者！
+
+### v1.24：Stargazer
+
+从古代天文学家到建造詹姆斯·韦伯太空望远镜的科学家，一代又一代的人都怀着敬畏和惊奇的心情仰望星空。
+
+星星启发了我们，点燃了我们的想象力，并指引我们度过艰难的海上漫漫长夜。
+
+借助此版本，我们展望未来，看看当我们的社区团结起来时，一切皆有可能。
+
+Kubernetes 是全球数百名贡献者和数千名最终用户的成果，他们支持为数百万人服务的应用程序。
+
+每个人都是我们天空中的一颗星星，帮助我们规划方向。
+
+### v1.28 Planternetes
+
+Kubernetes 的每个版本均由全球数千名多元背景的贡献者（行业专家、学生、开源新手等）协作构建，融合独特经验打造技术杰作。
+
+该版本的 “花园” 主题象征社区成员如植物般在挑战中共同成长，通过精心培育实现生态繁荣。
+
+这种协作精神贯穿版本迭代，推动 Kubernetes 在变化与机遇中持续演进，彰显开源社区的凝聚力与创造力。
+
+### v1.29 Mandala
+
+Kubernetes 社区如同曼陀罗艺术，象征多元协作的宇宙和谐。
+
+全球贡献者（行业专家、学生、开源新手等）如同曼陀罗的繁复图案，各自以独特技能（代码开发、文档维护、漏洞修复等）编织技术生态。
+
+正如曼陀罗创作依赖每个元素的精准配合，Kubernetes 的迭代也依托 SIG 小组协作（如 SIG Node、SIG Docs）与 KEP 提案机制，实现功能优化与安全增强。
+
+这种共生关系既体现技术严谨性，也传递开源社区的人文温度。
+
+### v1.30 Uwubernetes
+
+Kubernetes 由全球数千名志愿者无偿构建，他们因兴趣、学习或热爱而参与，并在此找到归属。
+
+v1.30 版本命名为 Uwubernetes（融合“Kubernetes”与表情符号“UwU”），象征社区的奇特，可爱与快乐。
+
+这一设计致敬所有贡献者，感谢他们让集群稳定运行，并传递内外交融的独特热情。
 
 ## 参考资料
 
 - [Kubernetes Blog](https://kubernetes.io/blog/)
+- [Kubernetes 1.18: Fit & Finish](https://kubernetes.io/blog/2020/03/25/kubernetes-1-18-release-announcement/)
+- [Kubernetes 1.19: Accentuate the Paw-sitive](https://kubernetes.io/blog/2020/08/26/kubernetes-release-1.19-accentuate-the-paw-sitive/)
 - [Kubernetes 1.20: The Raddest Release](https://kubernetes.io/blog/2020/12/08/kubernetes-1-20-release-announcement/)
 - [Kubernetes 1.21: Power to the Community](https://kubernetes.io/blog/2021/04/08/kubernetes-1-21-release-announcement/)
 - [Kubernetes 1.22: Reaching New Peaks](https://kubernetes.io/blog/2021/08/04/kubernetes-1-22-release-announcement/)
 - [Kubernetes 1.23: The Next Frontier](https://kubernetes.io/blog/2021/12/07/kubernetes-1-23-release-announcement/)
+- [Kubernetes 1.24：Stargazer](https://kubernetes.io/blog/2022/05/03/kubernetes-1-24-release-announcement/)
+- [Kubernetes v1.25: Combiner](https://kubernetes.io/blog/2022/08/23/kubernetes-v1-25-release/)
+- [Kubernetes v1.26: Electrifying](https://kubernetes.io/blog/2022/12/09/kubernetes-v1-26-release/)
+- [Kubernetes v1.27: Chill Vibes](https://kubernetes.io/blog/2023/04/11/kubernetes-v1-27-release/)
+- [Kubernetes v1.28: Planternetes](https://kubernetes.io/blog/2023/08/15/kubernetes-v1-28-release/)
+- [Kubernetes v1.29: Mandala](https://kubernetes.io/blog/2023/12/13/kubernetes-v1-29-release/)
+- [Kubernetes v1.30: Uwubernetes](https://kubernetes.io/blog/2024/04/17/kubernetes-v1-30-release/)
+- [Kubernetes v1.31: Elli](https://kubernetes.io/blog/2024/08/13/kubernetes-v1-31-release/)
+- [Kubernetes v1.32: Penelope](https://kubernetes.io/blog/2024/12/11/kubernetes-v1-32-release/)
