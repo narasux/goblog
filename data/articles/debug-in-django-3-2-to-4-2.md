@@ -350,7 +350,7 @@ class AppConfig:
             ...
 ```
 
-看 Django 4.2 源码可以发现，在较高版本中（[3.2+](https://github.com/django/django/commit/3f2821af6bc48fa8e7970c1ce27bc54c3172545e)）不需要显示在 `__init__.py` 中指定 `default_app_config`，Django 自己会自动探测 `apps.py` 中的所有 AppConfig 的子类，并挑选合适的作为 AppConfig，如果无法选择，则抛出异常或使用默认的 Base AppConfig。
+看 Django 4.2 源码可以发现，在较高版本中（[3.2+](https://github.com/django/django/commit/3f2821af6bc48fa8e7970c1ce27bc54c3172545e)）不需要显式在 `__init__.py` 中指定 `default_app_config`，Django 自己会自动探测 `apps.py` 中的所有 AppConfig 的子类，并挑选合适的作为 AppConfig，如果无法选择，则抛出异常或使用默认的 Base AppConfig。
 
 那么，为啥 Django 从 3.2 升级到 4.2 后，这个逻辑就崩了呢？还是老办法，看版本代码 diff，即可发现在 Django 4.1 中，对 `default_app_config` 配置的支持被[完全移除](https://github.com/django/django/commit/75d6c4ae6df93c4c4d8621aced3a180afa18a6cb)，这就是问题所在。
 

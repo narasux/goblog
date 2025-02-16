@@ -3,12 +3,12 @@ package router
 import (
 	"fmt"
 
+	"github.com/Masterminds/sprig/v3"
 	"github.com/gin-gonic/gin"
 
 	"github.com/narasux/goblog/pkg/envs"
 	"github.com/narasux/goblog/pkg/handler"
 	"github.com/narasux/goblog/pkg/middleware"
-	"github.com/narasux/goblog/pkg/utils/funcs"
 )
 
 func InitRouter() {
@@ -24,7 +24,7 @@ func InitRouter() {
 	// 设置静态文件
 	router.Static("/static", envs.StaticFileBaseDir)
 	// 设置模板方法
-	router.SetFuncMap(funcs.NewFuncMap())
+	router.SetFuncMap(sprig.FuncMap())
 	// 加载 HTML 模板文件
 	router.LoadHTMLGlob(envs.TmplFileBaseDir + "/webfe/*")
 	// 404
