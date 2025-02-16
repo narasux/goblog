@@ -176,7 +176,7 @@ Kubernetes v1.22 中通过引入 cgroups v2 来提供了一个 alpha 特性，�
 
 ```yaml
 enforce: 违反策略的 Pod 将被拒绝
-audit: 违反策略的 Pod 将会添加审计注释，但其他情况下都允许
+audit: 违反策略的 Pod 将会添加审计日志
 warn: 违反策略的 Pod 将会触发面向用户的警告
 ```
 
@@ -268,7 +268,7 @@ spec:
 
 #### HPA v2（GA）
 
-从此可以告别 `autoscaling/v2beta2` 版本，虽然 v2 相比于 v1 多了很多的功能支持（如外部，自定义指标等），对于目标类型也有更多的支持（不止是百分比）。
+从此可以告别 `autoscaling/v2beta2` 版本，虽然 v2 相比于 v1 多了很多的功能支持（如外部，自定义指标等），对于目标类型也有更多的支持（不止是百分比，也可以是具体值，如：512Mi）。
 
 需要注意的是，v2beta1 / v2beta2 版本被废弃而更佳推荐 v2，但是 v1 版本的 HPA 还会继续存在较长的时间。
 
@@ -284,6 +284,8 @@ readinessProbe:
   initialDelaySeconds: 5
   periodSeconds: 10
 ```
+
+> https://kubernetes.io/zh-cn/blog/2022/05/13/grpc-probes-now-in-beta/
 
 #### CRD Validation 支持表达式（v1.23 Alpha (Current), v1.25 Beta, v1.29 GA）
 
@@ -433,12 +435,12 @@ cgroup v2 相对于 cgroup v1 有几项改进，例如：
 
 - 共享命名空间：临时容器与目标容器共享网络、进程、IPC 等命名空间
 - 生命周期：临时容器随 Pod 终止而销毁，但不会触发 Pod 重启
-- 资源限制：可以定义 CPU/内存限制（需在 ephemeralContainers 字段中配置）
+- 资源限制：可以定义 CPU/内存限制（需在 `ephemeralContainers` 字段中配置）
 
 使用场景
 
-- 调试崩溃的容器：当主容器因崩溃无法执行 kubectl exec 时，通过临时容器检查日志或进程
-- 网络诊断：使用 nicolaka/netshoot 镜像执行网络排查（如 tcpdump、curl）
+- 调试崩溃的容器：当主容器因崩溃无法执行 `kubectl exec` 时，通过临时容器检查日志或进程
+- 网络诊断：使用 `nicolaka/netshoot` 镜像执行网络排查（如 tcpdump、curl）
 - 动态注入工具：临时加载性能分析工具（如 strace、perf）
 
 使用实例（kubectl）：
@@ -447,7 +449,7 @@ cgroup v2 相对于 cgroup v1 有几项改进，例如：
 # 语法
 kubectl debug <pod-name> -it --image=<debug-image> --target=<container-name> -- <command>
 
-# 示例：附加一个 busybox 临时容器到名为 "my-pod" 的 Pod
+# 示例：附加 busybox 临时容器到名为 "my-pod" 的 Pod
 kubectl debug my-pod -it --image=busybox --target=my-container -- sh
 ```
 
@@ -491,9 +493,9 @@ test-pod   0/1     SchedulingGated   0          10s
 
 #### PersistentVolumes 单 Pod 访问模式（v1.27 Beta (Current), v1.22 Alpha, v1.29 GA）
 
-ReadWriteOncePod 访问模式可让您将卷访问限制到集群中的单个 Pod，从而确保一次只有一个 Pod 可以写入卷，这对于需要单写入者访问存储的有状态工作负载特别有用。
+`ReadWriteOncePod` 访问模式可让您将卷访问限制到集群中的单个 Pod，从而确保一次只有一个 Pod 可以写入卷，这对于需要单写入者访问存储的有状态工作负载特别有用。
 
-注意：ReadWriteOncePod 仅支持 CSI 卷且需要依赖较高版本的 CSI sidecar。
+注意：`ReadWriteOncePod` 仅支持 CSI 卷且需要依赖较高版本的 CSI sidecar。
 
 ```yaml
 kind: PersistentVolumeClaim
@@ -510,9 +512,9 @@ spec:
 
 其他几种 AccessModes:
 
-- ReadWriteOnce：该卷可由单个节点以读写方式安装
-- ReadOnlyMany：许多节点可以以只读方式安装该卷
-- ReadWriteMany：该卷可由多个节点以读写方式安装
+- `ReadWriteOnce`：该卷可由单个节点以读写方式安装
+- `ReadOnlyMany`：许多节点可以以只读方式安装该卷
+- `ReadWriteMany`：该卷可由多个节点以读写方式安装
 
 > https://kubernetes.io/blog/2023/04/20/read-write-once-pod-access-mode-beta/
 > 
@@ -530,10 +532,10 @@ spec:
 
 最后，Pod 状态中还新增了一个 `resize` 字段，用于显示最近一次资源调整状态：
 
-- Proposed：对请求的资源调整的确认，表明该请求已通过验证并记录。
-- InProgress：值表示节点已接受资源调整请求，并且正在将该请求应用到 Pod 的容器上。
-- Deferred：当前无法批准所请求的资源调整，节点将持续重试直到有足够的资源。
-- Infeasible：节点无法满足所请求的资源调整，比如 Pod 要求的资源超过单节点上限。
+- `Proposed`：对请求的资源调整的确认，表明该请求已通过验证并记录
+- `InProgress`：值表示节点已接受资源调整请求，并且正在将该请求应用到 Pod 的容器上
+- `Deferred`：当前无法批准所请求的资源调整，节点将持续重试直到有足够的资源
+- `Infeasible`：节点无法满足所请求的资源调整，比如 Pod 要求的资源超过单节点上限
 
 > https://kubernetes.io/blog/2023/05/12/in-place-pod-resize-alpha/
 
