@@ -688,6 +688,56 @@ recursiveReadOnly: Enabled
 
 > https://kubernetes.io/blog/2024/04/23/recursive-read-only-mounts/
 
+### k8s v1.31
+
+#### PodAffinity 中的 MatchLabelKeys（v1.31 Beta (Current), v1.29 Alpha）
+
+在工作负载（例如 Deployment）滚动更新的过程中，集群中可能会同时存在来自多个版本的 Pod。然而，调度器无法根据 podAffinity 或 podAntiAffinity 中指定的 `labelSelector` 区分新旧版本的 Pod，因此在调度时会无差别地执行共置（co-location）或分散（dispersion）策略，而忽略 Pod 的版本差异。
+
+这可能导致以下次优调度结果：
+
+- 新旧版本 Pod 被强制共置：新版本 Pod 被调度到与旧版本 Pod 相同的拓扑域（如节点），而这些旧版本 Pod 最终会在滚动更新完成后被删除，导致资源浪费或稳定性风险。
+- 新旧版本 Pod 受反亲和性干扰：旧版本 Pod 已占满所有可用拓扑域（例如分散在不同节点上）。当使用 podAntiAffinity 时，新版本 Pod 可能因无法找到满足反亲和性约束的节点而被阻塞调度（尽管旧版本即将被淘汰）。
+
+`matchLabelKeys` 是一组 Pod 标签键，它能解决这个问题。调度器会从新 Pod 的标签中查找这些键对应的值，并将其与 `labelSelector` 相结合，这样 podAffinity 就能匹配到标签中具有相同键值对的 Pod。
+
+通过在 `matchLabelKeys` 中使用 `pod-template-hash` 标签，你可以确保在评估 podAffinity 或 podAntiAffinity 时，仅考虑同一版本的 Pod。
+
+```yaml
+kind: Pod
+metadata:
+  name: application-server
+  labels:
+    pod-template-hash: xyz
+...
+  affinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: app
+            operator: In
+            values:
+            - database
+          - key: pod-template-hash # Added from matchLabelKeys; Only Pods from the same replicaset will match this affinity.
+            operator: In
+            values:
+            - xyz
+        topologyKey: topology.kubernetes.io/zone
+        matchLabelKeys:
+        - pod-template-hash
+```
+
+`mismatchLabelKeys` 则效果相反，具体表现为 `operator` 值为 `NotIn`，这两者搭配亲和 / 反亲和性可以实现更灵活的 Pod 调度。
+
+> https://kubernetes.io/blog/2024/08/16/matchlabelkeys-podaffinity/
+
+### k8s v1.32
+
+v1.32 中的新功能（Alpha）主要是底层的一些改进（如：调度程序中的异步抢占，Pod 级动态资源池），和具体的应用关系不大，跳过。
+
+不过还是有挺多功能在这个版本变成 Beta / GA，比如：自定义资源字段选择器（FieldSelector），卷组快照（VolumeGroupSnapshot）。
+
 ## Kubernetes Logo 彩蛋
 
 与 MacOS 一样，k8s 的每次大版本发布都有新的名字 & Logo，在 Release Note 中会说明 Logo 的设计理念：
@@ -740,9 +790,13 @@ v1.30 版本命名为 Uwubernetes（融合“Kubernetes”与表情符号“UwU�
 
 这一设计致敬所有贡献者，感谢他们让集群稳定运行，并传递内外交融的独特热情。
 
-## 挖个坑吧
+## 挖点坑吧
 
-k8s 目前有个新的网络管理资源 Gateway，是 Ingress 的进阶方案，有更强灵活性 & 可扩展性，可以满足更复杂的网络治理需求，后续可以研究下，争取再写个博客。
+k8s 目前有个新的网络管理资源 Gateway，是 Ingress 的进阶方案，有更强灵活性 & 可扩展性，可以满足更复杂的网络治理需求。
+
+自 k8s v1.16 开始，k8s 持续在为 `kubectl debug` 添加新的功能，开发者可以在高版本中方便地启动临时容器来调试有问题的 Pod（无需重启/复制）。
+
+上面这两个也挺有意思的，不过碍于篇幅 ~~（其实是偷懒）~~，这里不展开细说，可能后面会有单独一篇博客来探讨一下 2333
 
 ## 参考资料
 
