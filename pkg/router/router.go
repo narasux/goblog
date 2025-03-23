@@ -41,6 +41,9 @@ func InitRouter() {
 	webfeRg.GET("articles", handler.ListArticles)
 	// 博客文章详情
 	webfeRg.GET("articles/:id", handler.RetrieveArticle)
+	// 点赞博客文章
+	webfeRg.POST("articles/:id/like", handler.LikeArticle)
+
 	// RSS
 	webfeRg.GET("rss", handler.GetRSS)
 
