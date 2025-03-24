@@ -47,7 +47,7 @@ func InitDBClient(ctx context.Context) {
 		return
 	}
 	dbInitOnce.Do(func() {
-		dbInfo := fmt.Sprintf("mysql %s:%s/%s", envs.MysqlHost, envs.MysqlPort, envs.MysqlDBName)
+		dbInfo := fmt.Sprintf("mysql %s:%s/%s", envs.MysqlHost, envs.MysqlPort, envs.MysqlDatabase)
 
 		var err error
 		if db, err = newClient(ctx); err != nil {
@@ -62,11 +62,11 @@ func InitDBClient(ctx context.Context) {
 func newClient(ctx context.Context) (*gorm.DB, error) {
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=true",
-		envs.MysqlUsername,
+		envs.MysqlUser,
 		envs.MysqlPassword,
 		envs.MysqlHost,
 		envs.MysqlPort,
-		envs.MysqlDBName,
+		envs.MysqlDatabase,
 		envs.MysqlCharSet,
 	)
 

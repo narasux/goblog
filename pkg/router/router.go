@@ -32,20 +32,26 @@ func InitRouter() {
 	// robots.txt
 	router.GET("robots.txt", handler.GetRobotsTxt)
 
-	// 注册路由
-	webfeRg := router.Group("")
-	// 主页
-	webfeRg.GET("", handler.GetHomePage)
-	webfeRg.GET("home", handler.GetHomePage)
-	// 博客文章列表
-	webfeRg.GET("articles", handler.ListArticles)
-	// 博客文章详情
-	webfeRg.GET("articles/:id", handler.RetrieveArticle)
-	// 点赞博客文章
-	webfeRg.POST("articles/:id/like", handler.LikeArticle)
+	// webfe 路由
+	{
+		webfeRg := router.Group("")
+		// 主页
+		webfeRg.GET("", handler.GetHomePage)
+		webfeRg.GET("home", handler.GetHomePage)
+		// 博客文章列表
+		webfeRg.GET("articles", handler.ListArticles)
+		// 博客文章详情
+		webfeRg.GET("articles/:id", handler.RetrieveArticle)
+		// RSS
+		webfeRg.GET("rss", handler.GetRSS)
+	}
 
-	// RSS
-	webfeRg.GET("rss", handler.GetRSS)
+	// api 路由
+	{
+		apiRg := router.Group("apis")
+		// 点赞博客文章
+		apiRg.POST("articles/:id/like", handler.LikeArticle)
+	}
 
 	if err := router.Run(":" + envs.ServerPort); err != nil {
 		panic(fmt.Sprintf("failed to start server: %s", err.Error()))

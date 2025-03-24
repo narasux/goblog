@@ -85,7 +85,7 @@
         if (liked) {
           return
         }
-        axios.post("/articles/{{ .article.ID }}/like")
+        axios.post("/apis/articles/{{ .article.ID }}/like")
           .then(() => {
             liked = true;
             likeIcon = document.getElementById("likeIcon")

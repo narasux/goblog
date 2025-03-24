@@ -63,12 +63,12 @@ var (
 	MysqlHost = envx.Get("MYSQL_HOST", "localhost")
 	// MysqlPort MySQL 端口
 	MysqlPort = envx.Get("MYSQL_PORT", "3306")
-	// MysqlUsername MySQL 用户名
-	MysqlUsername = envx.Get("MYSQL_USERNAME", "root")
+	// MysqlUser MySQL 用户名
+	MysqlUser = envx.Get("MYSQL_USER", "root")
 	// MysqlPassword MySQL 密码
 	MysqlPassword = envx.Get("MYSQL_PASSWORD", "root")
-	// MysqlDBName MySQL 数据库名
-	MysqlDBName = envx.Get("MYSQL_DB_NAME", "goblog")
+	// MysqlDatabase MySQL 数据库名
+	MysqlDatabase = envx.Get("MYSQL_DATABASE", "goblog")
 	// MysqlCharSet MySQL 字符集
 	MysqlCharSet = envx.Get("MYSQL_CHARSET", "utf8mb4")
 
