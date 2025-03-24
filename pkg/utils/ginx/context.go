@@ -1,6 +1,10 @@
 package ginx
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+
+	"github.com/narasux/goblog/pkg/envs"
+)
 
 const (
 	// RequestIDKey ...
@@ -39,4 +43,12 @@ func GetError(c *gin.Context) (any, bool) {
 // SetError ...
 func SetError(c *gin.Context, err error) {
 	c.Set(ErrorKey, err)
+}
+
+// GetClientIP ...
+func GetClientIP(c *gin.Context) string {
+	if envs.RealClientIPHeaderKey != "" {
+		return c.GetHeader(envs.RealClientIPHeaderKey)
+	}
+	return c.ClientIP()
 }

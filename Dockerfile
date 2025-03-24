@@ -1,5 +1,5 @@
 # -------------- builder container --------------
-FROM golang:1.22 as builder
+FROM golang:1.23.7 as builder
 
 WORKDIR /go/src/
 
@@ -18,7 +18,7 @@ COPY . .
 RUN make build VERSION=$VERSION
 
 # -------------- runner container --------------
-FROM alpine:3.19 AS runner
+FROM alpine:3.21 AS runner
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories
 

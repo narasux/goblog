@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <script src="/static/js/tailwindcss.js"></script>
     <script src="/static/js/highlight.min.js"></script>
+    <script src="/static/js/axios.min.js"></script>
     <!-- Mermaid 比较耗时，如果非必须则不加载-->
     {{- if .mermaidRequired }}
     <script src="/static/js/mermaid.min.js"></script>
@@ -39,9 +40,15 @@
         <div class="flex-1">
           <button
             onclick="scrollToTop()"
-            class="fixed bottom-28 right-10 rounded-md bg-sky-500 p-3 text-white hover:bg-sky-600"
+            class="fixed bottom-40 right-10 rounded-md bg-sky-500 p-3 text-white hover:bg-sky-600"
           >
             <i class="fa-arrow-up fas"></i>
+          </button>
+          <button
+            onclick="likeArticle()"
+            class="fixed bottom-24 right-10 rounded-md bg-sky-500 p-3 text-white hover:bg-sky-600"
+          >
+            <i id="likeIcon" class="fa-thumbs-up far"></i>
           </button>
         </div>
       </div>
@@ -69,6 +76,25 @@
       // 点击按钮时执行页面滚动到顶部的操作
       function scrollToTop() {
         window.scrollTo({top: 0, behavior: "smooth"});
+      }
+
+      let liked = false;
+
+      // 点赞文章
+      function likeArticle() {
+        if (liked) {
+          return
+        }
+        axios.post("/apis/articles/{{ .article.ID }}/like")
+          .then(() => {
+            liked = true;
+            likeIcon = document.getElementById("likeIcon")
+            likeIcon.classList.remove("far")
+            likeIcon.classList.add("fas")
+          })
+          .catch((err) => {
+            console.error(err)
+          });
       }
     </script>
   </body>

@@ -1,11 +1,22 @@
 package envs
 
 import (
+	"os"
 	"path/filepath"
+	"strings"
+
+	"github.com/samber/lo"
 
 	"github.com/narasux/goblog/pkg/common/runmode"
 	"github.com/narasux/goblog/pkg/utils/envx"
 	"github.com/narasux/goblog/pkg/utils/pathx"
+)
+
+var (
+	pwd, _     = os.Getwd()
+	exePath, _ = os.Executable()
+	exeDir     = filepath.Dir(exePath)
+	baseDir    = lo.Ternary(strings.Contains(exeDir, pwd), exeDir, pwd)
 )
 
 // 以下变量值可通过环境变量指定
@@ -21,6 +32,9 @@ var (
 
 	// GinRunMode web 服务运行模式
 	GinRunMode = envx.Get("GIN_RUN_MODE", runmode.Release)
+
+	// BaseDir 项目根目录
+	BaseDir = envx.Get("BASE_DIR", baseDir)
 
 	// TmplFileBaseDir
 	TmplFileBaseDir = envx.Get("TMPL_FILE_BASE_DIR", filepath.Join(pathx.GetCurPKGPath(), "../../templates"))
@@ -42,6 +56,21 @@ var (
 
 	// RealClientIPHeaderKey Header 中真实客户端 IP 键（适用于类似 Nginx 转发的情况）为空则使用默认的 ClientIP
 	RealClientIPHeaderKey = envx.Get("REAL_CLIENT_IP_HEADER_KEY", "")
+
+	// ========== 数据库相关配置 ==========
+
+	// MysqlHost MySQL 主机
+	MysqlHost = envx.Get("MYSQL_HOST", "localhost")
+	// MysqlPort MySQL 端口
+	MysqlPort = envx.Get("MYSQL_PORT", "3306")
+	// MysqlUser MySQL 用户名
+	MysqlUser = envx.Get("MYSQL_USER", "root")
+	// MysqlPassword MySQL 密码
+	MysqlPassword = envx.Get("MYSQL_PASSWORD", "root")
+	// MysqlDatabase MySQL 数据库名
+	MysqlDatabase = envx.Get("MYSQL_DATABASE", "goblog")
+	// MysqlCharSet MySQL 字符集
+	MysqlCharSet = envx.Get("MYSQL_CHARSET", "utf8mb4")
 
 	// ========== 以下 MyGo 配置有助于你的网站出现在 Google、Baidu 的搜索结果中 ==========
 

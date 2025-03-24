@@ -21,12 +21,34 @@ services:
     volumes:
       - ${ROOT_DIR}/mysql-data:/var/lib/mysql
   # 博客 web 服务
+  goblog-migrate:
+    image: goblog:${GOBLOG_IMAGE_TAG}
+    container_name: goblog-migrate
+    entrypoint:
+      - goblog
+      - migrate
+    # 等待 mysql 就绪再执行 migrate
+    depends_on:
+      - unity-mysql
+    environment:
+      LOG_LEVEL: info
+      MYSQL_HOST: unity-mysql
+      MYSQL_PORT: "3306"
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    networks:
+      - goblog
+    volumes:
+      - ${ROOT_DIR}/goblog-logs:/data/logs/
+  # 博客 web 服务
   goblog-web:
     image: goblog:${GOBLOG_IMAGE_TAG}
     container_name: goblog-web
-    # 等待 mysql 就绪再启动 web 服务
+    # 等待 mysql 就绪，且 migrate 执行完成后，再启动 web 服务
     depends_on:
       - unity-mysql
+      - goblog-migrate
     environment:
       LOG_LEVEL: info
       REAL_CLIENT_IP_HEADER_KEY: X-Real-IP
