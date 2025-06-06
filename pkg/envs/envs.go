@@ -36,10 +36,10 @@ var (
 	// BaseDir 项目根目录
 	BaseDir = envx.Get("BASE_DIR", baseDir)
 
-	// TmplFileBaseDir
+	// TmplFileBaseDir 模板文件目录
 	TmplFileBaseDir = envx.Get("TMPL_FILE_BASE_DIR", filepath.Join(pathx.GetCurPKGPath(), "../../templates"))
 
-	// StaticFileBaseDir
+	// StaticFileBaseDir 静态文件目录
 	StaticFileBaseDir = envx.Get("STATIC_FILE_BASE_DIR", filepath.Join(pathx.GetCurPKGPath(), "../../static"))
 
 	// BlogDataBaseDir 博客文章内容存放目录
