@@ -1,5 +1,14 @@
 [
   {
+    "id": "celery-task-source-code-note",
+    "category": "技术分享",
+    "tags": ["Python", "Celery"],
+    "title": "源码笔记：Celery Task",
+    "desc": "本文是 Python Celery Task 的源码笔记",
+    "updateAt": "2025-06-22",
+    "content": ""
+  },
+  {
     "id": "t-strings-in-python-3-14",
     "category": "技术分享",
     "tags": ["Python"],
