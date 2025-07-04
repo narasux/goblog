@@ -566,6 +566,126 @@ add_to_parent (bool): If set to True (default) and the task
  - 可通过 parent_task.request.children 追踪所有子任务状态
 ```
 
+### 信号
+
+Celery 中的 [Signals（信号）](https://docs.celeryq.dev/en/stable/userguide/signals.html) 是一种事件驱动机制，用于在任务执行的生命周期内，系统状态变化的关键节点触发自定义逻辑。
+
+通过在代码中使用信号，可以解耦核心功能与扩展行为，增强系统的灵活性和可维护性。
+
+以最常用的 Task 类信号为例：
+
+| 分类    | 信号名                 | 触发时机                   | 用途                      |
+|-------|---------------------|------------------------|-------------------------|
+| 发布    | before_task_publish | 任务发送到 Broker 前         | 任务元数据注入、参数 & 权限校验、优先级控制 | 
+|       | after_task_publish  | 任务发送到 Broker 后         | 记录发布日志、初始状态入库           |
+| 任务执行  | task_received       | Worker 从 Broker 接收到任务时 | 资源预分配、实施监控              |
+|       | task_prerun         | 任务开始执行前                | 上下文设置、执行锁控制             |
+|       | task_postrun        | 任务执行完成后                | 资源释放、结果清理、耗时统计          |
+|       | task_retry          | 任务重试前                  | 调整重试策略、告警降级             |
+| 结果与异常 | task_success        | 任务成功执行后                | 结果持久化、触发下游任务            |
+|       | task_failure        | 任务执行失败后                | 错误兜底处理、状态监控、告警推送        |
+|       | task_internal_error | 任务内部发生错误时              | 健壮性提升、版本兼容性检查           |
+| 任务管控  | task_revoked        | 任务被显式撤销后               | 资源即时释放、状态同步             |
+|       | task_unknown        | 任务未找到时（代码版本不一致）        | 版本一致性检查 & 告警            |
+|       | task_rejected       | 任务被拒绝时（队列满/策略拒绝）       | 弹性扩缩容、服务降级              |
+
+**task_prerun 信号示例**
+
+```python
+from celery.signals import task_prerun
+import logging
+
+logger = logging.getLogger(__name__)
+
+@task_prerun.connect
+def on_task_prerun(sender, task_id, task, args, kwargs, **extras):
+    # 从请求对象中获取 headers（需通过 request 属性）
+    request = task.request
+    headers = request.headers if hasattr(request, 'headers') else {}
+    request_id = headers.get('id', 'N/A')
+    
+    # 记录任务启动日志
+    logger.info(
+        f"Task {task_id} (Name: {task.name}) started. "
+        f"Request ID: {request_id}, Args: {args}"
+    )
+    
+    # 初始化资源（如对象存储服务）
+    init_object_storages()
+```
+
+**task_failure 信号示例**
+
+```python
+from celery.signals import task_failure
+from .utils import send_alert
+
+@task_failure.connect
+def on_task_failure(task_id, exception, traceback, einfo, **kwargs):
+    # 记录详细错误信息
+    error_msg = f"Task {task_id} failed: {exception}\nTraceback: {traceback}"
+    logger.error(error_msg)
+    
+    # 发送告警到监控系统（如：Sentry）
+    send_alert(
+        recipient="ops-team@example.com",
+        subject=f"Celery Task Failed: {task_id}",
+        content=error_msg
+    )
+    
+    # 数据库状态回滚
+    rollback_db_status(task_id)
+```
+
+除了 Task 类信号外，Celery 还提供 App，Worker，Beat，Logging 等多种类型的信号，开发者可根据实际需求进行监听和处理。
+
+#### 信号使用注意事项
+
+- 信号处理函数应尽量简单，避免阻塞主线程（尤其是经常触发的信号，比如 task_success）。
+- 多个信号的执行顺序不确定，如果多个信号之间存在依赖关系，需要自行保证执行顺序。
+- 应当防止信号自身崩溃，信号处理器中的异常若未捕获，可能导致 Worker 崩溃。
+- 避免滥用信号，过多的信号会导致系统过载，影响服务的整体性能。
+
+### 性能优化
+
+#### Broker 连接池
+
+我们可以通过配置 `broker_pool_limit` 参数来用于控制与 Broker 之间的连接池大小。能够减少频繁建立和关闭连接的开销，提升高并发场景下的任务处理效率。
+
+需要注意的是，配置 `broker_pool_limit` 的同时还要配置 `broker_heartbeat` 参数以确保连接存活。
+
+#### 临时队列
+
+在某些情况下，任务丢失是可接受的（比如派发广告），此时可以使用临时队列来避免消息持久化，降低 broker 负载的同时提升一定的性能。
+
+```python
+from kombu import Exchange, Queue
+
+task_queues = (
+    Queue('celery', routing_key='celery'),
+    # 不会持久化的临时队列，delivery_mode = 1 / 'transient' 表示不持久化
+    Queue('transient', Exchange('transient', delivery_mode=1), routing_key='transient', durable=False),
+)
+
+task.apply_async(args, queue='transient')
+```
+
+#### 预取限制
+
+预取限制（`worker_prefetch_multiplier`）是指 worker 一次性拉取的消息数量，如果设置过大，会导致内存占用过多，如果设置过小，会导致频繁拉取消息，降低性能。
+
+实践中一般推荐：
+- 对于需要长耗时 / 资源占用多的任务，建议设置预取限制为 1。
+- 对于短耗时 / 资源占用少的任务，建议设置预取限制为 50-100。
+
+#### 资源使用管理
+
+在 worker 执行一定数量的任务后，可能会出现资源没有及时释放的情况，多个 worker 争夺资源可能会导致最后容器 OOMKilled。
+
+因此，我们可以设置 `worker_max_tasks_per_child` 参数，当 worker 执行超过该参数值的任务后，会自动重启以释放资源（一般推荐 100-1000）。
+
+除此之外，还可以设置 `worker_max_memory_per_child` 参数，当 worker 内存占用超过该参数值时，**会在当前任务完成后**自动重启释放资源（有局限性）。
+
 ## 小插曲
 
 翻阅 Celery 源码时候，发现最近有另外一位开发者添加了一个检查，限制 `soft_time_limit` 不能大于 `time_limit`
