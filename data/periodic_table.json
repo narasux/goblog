@@ -1,0 +1,399 @@
+{
+  "name": "Elements of System Design",
+  "source": "jarulraj/periodic-table",
+  "groups": [
+    {
+      "symbol": "Str",
+      "name": "结构设计（Structure）",
+      "color": "rose-200",
+      "description": "通过清晰边界和扩展点划分模块并建立连接。",
+      "elements": [
+        {
+          "symbol": "Si",
+          "name": "简单性（Simplicity）",
+          "description": "选择满足当前需求的最简系统设计；抵制“以防万一”增加的复杂性（如额外层级、服务或通用性），直至有证据表明其收益。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Mo",
+          "name": "模块化（Modularity）",
+          "description": "将系统划分为高内聚的单元，通过最小化接口实现各单元的独立推理、替换或演进，分解职责边界，确保关注点分离。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Co",
+          "name": "可组合性（Composability）",
+          "description": "设计可安全灵活重组的组件，依赖显式契约和类型约束接口，使合法组合始终正确（类似可互换的积木）。与模块化不同，此原则聚焦重组能力。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Ex",
+          "name": "可扩展性（Extensibility）",
+          "description": "允许用户安全地添加自定义扩展（如插件），而无需修改系统核心。若扩展来源不可信，需通过沙箱隔离保障安全。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Pm",
+          "name": "策略/机制分离（Policy/Mechanism Separation）",
+          "description": "分离“做什么”（策略）与“怎么做”（机制），通过统一接口支持多策略接入同一机制。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Gr",
+          "name": "泛化设计（Generalized Design）",
+          "description": "设计具备显式可变点（如类型、配置项、插件）的核心，使其同时服务多场景，仅在性能/准确性/清晰度有显著收益时特化。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Pd",
+          "name": "概率设计（Probabilistic Design）",
+          "description": "引入可控随机性以提升效率、可扩展性或简洁性，同时接受可量化的微小错误/损失风险。",
+          "examples": [],
+          "articles": []
+        }
+      ]
+    },
+    {
+      "symbol": "Eff",
+      "name": "效率优化（Efficiency）",
+      "color": "orange-200",
+      "description": "聚焦关键环节减少冗余计算，以更低成本达成目标。",
+      "elements": [
+        {
+          "symbol": "Sc",
+          "name": "可扩展性（Scalability）",
+          "description": "设计系统以处理数据量、流量或节点规模的线性增长，确保成本或延迟接近线性变化。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Rc",
+          "name": "计算复用（Reuse of Computation）",
+          "description": "通过缓存、物化中间结果（如索引）或增量更新输出来避免冗余计算，尤其适用于重复或微调输入的场景。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Wv",
+          "name": "避免无效计算（Work Avoidance）",
+          "description": "跳过不改变外部可观测结果的计算，例如惰性求值（lazy evaluation）和谓词短路（predicate short-circuiting）。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Cc",
+          "name": "常见场景特化（Common-Case Specialization）",
+          "description": "识别运行时主导的执行路径或数据项（“热点”），为其创建高效快速路径，同时保留通用路径处理所有场景。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Bo",
+          "name": "瓶颈导向优化（Bottleneck-Oriented Optimisation）",
+          "description": "通过端到端性能剖析定位最严格的资源约束，集中优化直至其他环节成为新瓶颈。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Ha",
+          "name": "硬件感知设计（Hardware-Aware Design）",
+          "description": "根据底层硬件特性（如缓存层级、NUMA、SSD、GPU）设计算法与数据结构，适配延迟、带宽、并行性和持久性。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Op",
+          "name": "乐观设计（Optimistic Design）",
+          "description": "假设常见场景会成功执行，跳过协调步骤；仅在假设失败时启用（可能昂贵的）恢复路径。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "La",
+          "name": "学习型近似（Learned Approximation）",
+          "description": "用数据训练的模型替代手工算法，以有限精度损失换取效率或灵活性。",
+          "examples": [],
+          "articles": []
+        }
+      ]
+    },
+    {
+      "symbol": "Sem",
+      "name": "语义规范（Semantics）",
+      "color": "yellow-200",
+      "description": "精确定义行为与接口，消除歧义。",
+      "elements": [
+        {
+          "symbol": "Al",
+          "name": "抽象提升（Abstraction Lifting）",
+          "description": "将底层操作封装在高层接口或领域特定语言（DSL）中，通过声明意图而非具体步骤实现功能，支持内部优化与多后端适配。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Lu",
+          "name": "语言统一性（Language Homogeneity）",
+          "description": "在核心组件与扩展中采用统一规范的中间表示（IR）或语言，确保语义对齐、工具链兼容，实现跨层优化与复用。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Se",
+          "name": "语义显式接口（Semantically Explicit Interfaces）",
+          "description": "精确定义接口语义（包括副作用可见性、操作顺序、持久性等），支持用户推理调用的真实外部状态，避免隐藏行为（如缓冲/复制）的猜测。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Fs",
+          "name": "形式化规范（Formal Specification）",
+          "description": "使用数学模型或逻辑描述系统行为，支持严格推理、验证或程序合成。实现机制包括时序逻辑、状态机等形式化方法。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Ig",
+          "name": "不变性引导的转换（Invariant-Guided Transformation）",
+          "description": "通过形式化不变性驱动代码重构、优化或配置变更，确保语义保真。",
+          "examples": [],
+          "articles": []
+        }
+      ]
+    },
+    {
+      "symbol": "Dist",
+      "name": "分布式协调（Distribution）",
+      "color": "green-200",
+      "description": "在分布式架构中协调任务与数据。",
+      "elements": [
+        {
+          "symbol": "Lt",
+          "name": "位置透明性（Location Transparency）",
+          "description": "隐藏资源的物理位置，客户端通过统一名称或句柄交互。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Dc",
+          "name": "去中心化控制（Decentralised Control）",
+          "description": "将决策权分散至多个节点，避免单点故障或瓶颈。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Fp",
+          "name": "功能就近部署（Function Placement）",
+          "description": "将功能部署在具备必要上下文和资源的节点，确保正确性与效率，避免冗余计算。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Lo",
+          "name": "访问局部性（Locality of Reference）",
+          "description": "将相关数据与操作在时空上紧密放置，维持访问模式并最小化计算与状态分离。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Cz",
+          "name": "协调避免（Coordination Avoidance）",
+          "description": "通过识别可独立执行的操作，减少分布式协调需求，同时保证应用层正确性。",
+          "examples": [],
+          "articles": []
+        }
+      ]
+    },
+    {
+      "symbol": "Plan",
+      "name": "规划决策（Planning）",
+      "color": "emerald-200",
+      "description": "基于目标、成本与约束自动选择方案。",
+      "elements": [
+        {
+          "symbol": "Ep",
+          "name": "等价重写规划（Equivalence-based Planning）",
+          "description": "在统一中间表示（IR）上应用代数/逻辑重写规则（保持语义等价），延迟最终方案至成本/约束优化阶段。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Cm",
+          "name": "成本驱动规划（Cost-based Planning）",
+          "description": "通过成本模型（如能耗、资金）指导设计/配置/执行策略的选择，避免穷举搜索。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Cp",
+          "name": "约束求解规划（Constraint-based Planning）",
+          "description": "将决策编码为硬/软约束，依赖求解器（如ILP/SMT）寻找可行或最优解。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Gd",
+          "name": "目标导向规划（Goal-Directed Planning）",
+          "description": "接受对目标状态的声明式描述，自动合成操作序列，向用户屏蔽实现细节。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Bb",
+          "name": "黑盒调优（Black-Box Tuning）",
+          "description": "当缺乏分析型成本模型时，通过测量目标系统上的候选方案迭代优化（启发式/贝叶斯搜索）。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Ah",
+          "name": "建议性提示（Advisory Hinting）",
+          "description": "提供非绑定性提示以提升性能，忽略时不改变正确性。",
+          "examples": [],
+          "articles": []
+        }
+      ]
+    },
+    {
+      "symbol": "Oper",
+      "name": "可运维性（Operability）",
+      "color": "cyan-200",
+      "description": "无中断观察、自适应调整与系统演进。",
+      "elements": [
+        {
+          "symbol": "Ad",
+          "name": "自适应处理（Adaptive Processing）",
+          "description": "监控运行时状态，自动调整参数或策略。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Ec",
+          "name": "弹性伸缩（Elasticity）",
+          "description": "根据需求与成本目标自动调整资源分配。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Wa",
+          "name": "负载感知优化（Workload-Aware Optimisation）",
+          "description": "持续观测负载特征（偏斜、局部性等），动态适配数据布局或资源分配。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Au",
+          "name": "自动化与自治（Automation and Autonomy）",
+          "description": "系统自主执行例行任务，通常基于日志或用户示例学习。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Ho",
+          "name": "人类可观测性（Human Observability）",
+          "description": "暴露系统内部状态（指标、跟踪链路等），提升可观测性与调试能力。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Ev",
+          "name": "可演进性（Evolvability）",
+          "description": "支持系统变更时最小化停机或重写，且不破坏现有客户端契约。",
+          "examples": [],
+          "articles": []
+        }
+      ]
+    },
+    {
+      "symbol": "Rel",
+      "name": "可靠性保障（Reliability）",
+      "color": "sky-200",
+      "description": "在故障、并发及局部失效下保持正确性。",
+      "elements": [
+        {
+          "symbol": "Ft",
+          "name": "容错性（Fault Tolerance）",
+          "description": "在组件故障时维持系统运行（可降级）。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Is",
+          "name": "隔离保证正确性（Isolation for Correctness）",
+          "description": "在组件故障时维持系统运行（可降级）。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "At",
+          "name": "原子执行（Atomic Execution）",
+          "description": "将操作组包装为原子单元（全生效或全无效）。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Cr",
+          "name": "一致性松弛（Consistency Relaxation）",
+          "description": "在文档化范围内放松强一致性，以提升性能或可用性。",
+          "examples": [],
+          "articles": []
+        }
+      ]
+    },
+    {
+      "symbol": "Sec",
+      "name": "安全防护（Security）",
+      "color": "fuchsia-200",
+      "description": "通过权限约束与隔离机制保障安全性与完整性。",
+      "elements": [
+        {
+          "symbol": "Sy",
+          "name": "隔离实现安全（Security via Isolation）",
+          "description": "强制强边界阻止故障或恶意代码扩散。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Ac",
+          "name": "访问控制与审计（Access Control and Auditing）",
+          "description": "定义权限并记录每次访问以实现问责。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Lp",
+          "name": "最小权限（Least Privilege）",
+          "description": "仅授予任务所需最小权限，缩小故障半径。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Tq",
+          "name": "法定人数信任（Trust via Quorum）",
+          "description": "依赖多节点共识而非单一权威。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Cf",
+          "name": "保守默认值（Conservative Defaults）",
+          "description": "默认采用限制性安全设置，专家可手动启用高风险模式。",
+          "examples": [],
+          "articles": []
+        },
+        {
+          "symbol": "Sa",
+          "name": "构造保障安全（Safety by Construction）",
+          "description": "通过代码/数据结构设计使整类错误在编译时即不可能发生。",
+          "examples": [],
+          "articles": []
+        }
+      ]
+    }
+  ]
+}

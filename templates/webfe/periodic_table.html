@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <script src="/static/js/tailwindcss.js"></script>
+    <title>Narasux Blogs</title>
+    <style>
+      .hover-grow:hover {
+        transform: scale(1.2);
+        transition: transform 0.2s;
+      }
+    </style>
+  </head>
+  <body class="bg-yellow-50">
+    <main>
+      {{- template "common.header" . }}
+      <div class="mx-auto px-4 max-w-5xl">
+        <div class="m-10 text-center">
+          <h1 class="mb-3 font-bold text-sky-500 text-4xl"> {{ .Name }} </h1>
+          <p class="text-gray-700"> Inspired by <a class="text-sky-500" target="_blank" href="https://github.com/{{ .Source }}">{{ .Source }}</a></p>
+        </div>
+
+        <div class="bg-white shadow-lg m-8 p-6 border border-gray-200 rounded-xl">
+          <div class="overflow-x-auto overflow-y-hidden">
+            <table class="w-full table-fixed">
+              <thead>
+                <tr>
+                  {{ range .Groups }}
+                  <th class="px-4 py-3 font-semibold text-gray-800 text-center">
+                    <a class="cursor-pointer" onclick="showGroupsDescription()">
+                      {{ .Symbol }}
+                    </a>
+                  </th>
+                  {{ end }}
+                </tr>
+              </thead>
+              <tbody class="my-4">
+              {{ $groups := .Groups }}
+              {{ range $rowIdx := until 8 }}
+              <tr>
+                {{ range $colIdx := until 8 }}
+                <td class="py-2">
+                  {{ $group := index $groups $colIdx }}
+                  {{ if lt $rowIdx (len $group.Elements)}}
+                  {{ $ele := index $group.Elements $rowIdx }}
+                  <a onclick="showElementDetail({{ $colIdx }}, {{ $rowIdx }})">
+                    <div class="bg-{{ $group.Color }} flex justify-center items-center mx-auto border border-stone-600 rounded-md w-16 h-16 font-light cursor-pointer hover-grow">
+                      {{ $ele.Symbol }}
+                    </div>
+                  </a>
+                  {{ else }}
+                  <!-- 白色方块 -->
+                  <div class="bg-block-white mx-auto rounded-md w-16 h-16"></div>
+                  {{ end }}
+                </td>
+                {{ end }}
+              </tr>
+              {{ end }}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 族 / 元素详情 -->
+        <div id="details" class="overflow-x-auto overflow-y-hidden"></div>
+
+      </div>
+    </main>
+  </body>
+</html>
+<script>
+  var groups = {{ .Groups }};
+
+  function showGroupsDescription() {
+    console.log("aaa")
+    const detailDiv = document.getElementById("details");
+    detailDiv.innerHTML = `
+      <div class="bg-white shadow-lg mx-8 p-6 border border-gray-200 rounded-xl">
+        {{ range .Groups }}
+        <h2 class="text-gray-700 text-xl my-2"><b>{{ .Symbol }}</b> - {{ .Name }}：{{ .Description }}</h2>
+        {{ end }}
+      </div>
+    `;
+  }
+
+  function showElementDetail(groupIdx, elementIdx) {
+    const ele = groups[groupIdx].elements[elementIdx];
+    const detailDiv = document.getElementById("details");
+    detailDiv.innerHTML = `
+      <div class="bg-white shadow-lg mx-8 p-6 border border-gray-200 rounded-xl">
+        <h2 class="text-gray-700 text-xl my-2">${ele.symbol}：${ele.name}</h2>
+        <p class="text-gray-800">${ele.description}</p>
+        <!-- TODO <h3 class="text-gray-700 text-l mt-4">举个例子：</h3>-->
+        <!-- TODO <h3 class="text-gray-700 text-l mt-4">相关文章：</h3>-->
+      </div>
+    `;
+  }
+
+  window.onload = showGroupsDescription;
+</script>

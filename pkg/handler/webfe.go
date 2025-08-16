@@ -1,8 +1,11 @@
 package handler
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -96,6 +99,25 @@ func RetrieveArticle(c *gin.Context) {
 		"article":         article,
 		"mermaidRequired": strings.Contains(article.Content, "mermaid"),
 	})
+}
+
+// PeriodicTable 软件设计元素周期表
+func PeriodicTable(c *gin.Context) {
+	content, err := os.ReadFile(filepath.Join(envs.BlogDataBaseDir, "periodic_table.json"))
+	if err != nil {
+		// 加载不到文件，也没必要报错，就提示功能开发中 :D
+		c.HTML(http.StatusOK, "coming_soon.html", nil)
+		return
+	}
+
+	var periodicTable model.ElementPeriodicTable
+	if err = json.Unmarshal(content, &periodicTable); err != nil {
+		// 加载不到文件，也没必要报错，就提示功能开发中 :D
+		c.HTML(http.StatusOK, "coming_soon.html", nil)
+		return
+	}
+
+	c.HTML(http.StatusOK, "periodic_table.html", periodicTable)
 }
 
 // GetRSS 获取 RSS

@@ -1,5 +1,5 @@
 # -------------- builder container --------------
-FROM golang:1.23.7 as builder
+FROM golang:1.24.3 as builder
 
 WORKDIR /go/src/
 
@@ -36,7 +36,6 @@ COPY --from=builder /go/src/templates /data/workspace/templates
 
 ENV TMPL_FILE_BASE_DIR=/data/workspace/templates
 
-# TODO 后续图片数量增加后，可能导致镜像体积增大，可以考虑使用 COS ？
 COPY --from=builder /go/src/static /data/workspace/static
 
 ENV STATIC_FILE_BASE_DIR=/data/workspace/static
