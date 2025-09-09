@@ -72,7 +72,6 @@
   var groups = {{ .Groups }};
 
   function showGroupsDescription() {
-    console.log("aaa")
     const detailDiv = document.getElementById("details");
     detailDiv.innerHTML = `
       <div class="bg-white shadow-lg mx-8 p-6 border border-gray-200 rounded-xl">
@@ -83,15 +82,34 @@
     `;
   }
 
+  function generateExamplesSection(examples) {
+    if (!examples || examples.length === 0) return "";
+    let html = `<h3 class="text-gray-800 text-lg mt-6 mb-2">🌰 举些例子：</h3>`;
+    examples.forEach(example => {
+      html += `<p class="my-2 text-gray-700"><span class="font-medium">${example.name}</span>：${example.description}</p>`;
+    });
+    return html;
+  }
+
+  function generateArticlesSection(articles) {
+    if (!articles || articles.length === 0) return "";
+    let html = `<h3 class="text-gray-800 text-lg mt-6 mb-2">📖 相关文章：</h3><ul class="text-gray-800">`;
+    articles.forEach(article => {
+      html += `<li>- <a class="text-sky-500" href="${article.url}" target="_blank">${article.author}. (${article.year}). ${article.name}</a></li>`;
+    });
+    html += `</ul>`;
+    return html;
+  }
+
   function showElementDetail(groupIdx, elementIdx) {
     const ele = groups[groupIdx].elements[elementIdx];
     const detailDiv = document.getElementById("details");
     detailDiv.innerHTML = `
       <div class="bg-white shadow-lg mx-8 p-6 border border-gray-200 rounded-xl">
-        <h2 class="text-gray-700 text-xl my-2">${ele.symbol}：${ele.name}</h2>
-        <p class="text-gray-800">${ele.description}</p>
-        <!-- TODO <h3 class="text-gray-700 text-l mt-4">举个例子：</h3>-->
-        <!-- TODO <h3 class="text-gray-700 text-l mt-4">相关文章：</h3>-->
+        <h2 class="text-gray-800 text-xl my-2">${ele.symbol}：${ele.name}</h2>
+        <p class="text-gray-700">${ele.description}</p>
+        ${generateExamplesSection(ele.examples)}
+        ${generateArticlesSection(ele.articles)}
       </div>
     `;
   }

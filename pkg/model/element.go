@@ -1,12 +1,26 @@
 package model
 
+// Example 例子
+type Example struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
+// ArticleRef 文章引用
+type ArticleRef struct {
+	Name   string `json:"name"`
+	Author string `json:"author"`
+	Year   string `json:"year"`
+	Url    string `json:"url"`
+}
+
 // Element 元素
 type Element struct {
-	Symbol      string   `json:"symbol"`
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	Examples    []string `json:"examples"`
-	Articles    []string `json:"articles"`
+	Symbol      string       `json:"symbol"`
+	Name        string       `json:"name"`
+	Description string       `json:"description"`
+	Examples    []Example    `json:"examples"`
+	Articles    []ArticleRef `json:"articles"`
 }
 
 // ElementGroup 元素族

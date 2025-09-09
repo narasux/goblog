@@ -12,8 +12,52 @@
           "symbol": "Si",
           "name": "简单性（Simplicity）",
           "description": "选择满足当前需求的最简系统设计；抵制“以防万一”增加的复杂性（如额外层级、服务或通用性），直至有证据表明其收益。",
-          "examples": [],
-          "articles": []
+          "examples": [
+            {
+              "name": "KISS 原则",
+              "description": "“Keep It Simple, Stupid” (保持简单)，设计应简单直接，避免不必要的复杂性和抽象。"
+            },
+            {
+              "name": "YAGNI 原则",
+              "description": "“You Aren‘t Gonna Need It” (你不会需要它)，专注于实现当前明确需要的功能，而不是猜测未来可能需要的功能并提前构建，从而避免增加不必要的代码和复杂性。"
+            },
+            {
+              "name": "选择直接的技术方案",
+              "description": "如果一个简单的脚本或单一模块就能可靠地完成任务，就不必引入一个功能齐全但更复杂的框架或微服务架构。"
+            },
+            {
+              "name": "审慎评估第三方依赖",
+              "description": "在引入新的库或框架前，评估其真实必要性。如果一个轻量级的库足以满足需求，就不应引入一个庞大且带有许多无用功能的框架，以减少依赖泛滥和维护负担。"
+            },
+            {
+              "name": "提供合理的默认配置",
+              "description": "避免要求用户进行大量复杂配置才能使用基本功能。系统应提供“开箱即用”的明智默认值，高级配置应为可选项而非必选项。"
+            },
+            {
+              "name": "使用清晰的命名和简单的逻辑",
+              "description": "使用描述性名称，避免使用缩写或无意义的名称；避免使用复杂的逻辑和嵌套。"
+            },
+            {
+              "name": "避免过度抽象",
+              "description": "仅当存在明显重复或预期变化时才引入抽象层。为每个简单的操作都创建多层接口和实现，反而会增加理解难度。"
+            },
+            {
+              "name": "选择适合的模式",
+              "description": "根据问题的实际复杂度选择设计模式。在不适合的场景（例如简单的一次性操作）强行使用复杂模式（如复杂的领域事件总线），是过度工程化的表现。"
+            },
+            {
+              "name": "简单的架构分层",
+              "description": "采用职责明确、依赖关系清晰的分层架构（如经典的三 / 四层架构），而不是创建大量难以理解和维护的微小服务或模糊的界限。"
+            }
+          ],
+          "articles": [
+            {
+              "name": "You Want Modules, Not Microservices",
+              "author": "Neward & Associates",
+              "year": "2023",
+              "url": "https://blogs.newardassociates.com/blog/2023/you-want-modules-not-microservices.html"
+            }
+          ]
         },
         {
           "symbol": "Mo",
@@ -39,7 +83,7 @@
         {
           "symbol": "Pm",
           "name": "策略/机制分离（Policy/Mechanism Separation）",
-          "description": "分离“做什么”（策略）与“怎么做”（机制），通过统一接口支持多策略接入同一机制。",
+          "description": "分离 “做什么”（策略）与 “怎么做”（机制），通过统一接口支持多策略接入同一机制。",
           "examples": [],
           "articles": []
         },
