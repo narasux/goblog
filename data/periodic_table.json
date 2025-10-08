@@ -6,50 +6,51 @@
       "symbol": "Str",
       "name": "结构设计（Structure）",
       "color": "rose-200",
-      "description": "通过清晰边界和扩展点划分模块并建立连接。",
+      "desc": "通过清晰边界和扩展点划分模块并建立连接。",
       "elements": [
         {
           "symbol": "Si",
           "name": "简单性（Simplicity）",
-          "description": "选择满足当前需求的最简系统设计；抵制“以防万一”增加的复杂性（如额外层级、服务或通用性），直至有证据表明其收益。",
+          "desc": "选择满足当前需求的最简系统设计；抵制“以防万一”增加的复杂性（如额外层级、服务或通用性），直至有证据表明其收益。",
           "examples": [
             {
               "name": "KISS 原则",
-              "description": "“Keep It Simple, Stupid” (保持简单)，设计应简单直接，避免不必要的复杂性和抽象。"
+              "desc": "“Keep It Simple, Stupid” (保持简单)，设计应简单直接，避免不必要的复杂性和抽象。"
             },
             {
               "name": "YAGNI 原则",
-              "description": "“You Aren‘t Gonna Need It” (你不会需要它)，专注于实现当前明确需要的功能，而不是猜测未来可能需要的功能并提前构建，从而避免增加不必要的代码和复杂性。"
+              "desc": "“You Aren‘t Gonna Need It” (你不会需要它)，专注于实现当前明确需要的功能，而不是猜测未来可能需要的功能并提前构建，从而避免增加不必要的代码和复杂性。"
             },
             {
               "name": "选择直接的技术方案",
-              "description": "如果一个简单的脚本或单一模块就能可靠地完成任务，就不必引入一个功能齐全但更复杂的框架或微服务架构。"
+              "desc": "如果一个简单的脚本或单一模块就能可靠地完成任务，就不必引入一个功能齐全但更复杂的框架或微服务架构。"
             },
             {
               "name": "审慎评估第三方依赖",
-              "description": "在引入新的库或框架前，评估其真实必要性。如果一个轻量级的库足以满足需求，就不应引入一个庞大且带有许多无用功能的框架，以减少依赖泛滥和维护负担。"
+              "desc": "在引入新的库或框架前，评估其真实必要性。如果一个轻量级的库足以满足需求，就不应引入一个庞大且带有许多无用功能的框架，以减少依赖泛滥和维护负担。"
             },
             {
               "name": "提供合理的默认配置",
-              "description": "避免要求用户进行大量复杂配置才能使用基本功能。系统应提供“开箱即用”的明智默认值，高级配置应为可选项而非必选项。"
+              "desc": "避免要求用户进行大量复杂配置才能使用基本功能。系统应提供“开箱即用”的明智默认值，高级配置应为可选项而非必选项。"
             },
             {
               "name": "使用清晰的命名和简单的逻辑",
-              "description": "使用描述性名称，避免使用缩写或无意义的名称；避免使用复杂的逻辑和嵌套。"
+              "desc": "使用描述性名称，避免使用缩写或无意义的名称；避免使用复杂的逻辑和嵌套。"
             },
             {
               "name": "避免过度抽象",
-              "description": "仅当存在明显重复或预期变化时才引入抽象层。为每个简单的操作都创建多层接口和实现，反而会增加理解难度。"
+              "desc": "仅当存在明显重复或预期变化时才引入抽象层。为每个简单的操作都创建多层接口和实现，反而会增加理解难度。"
             },
             {
               "name": "选择适合的模式",
-              "description": "根据问题的实际复杂度选择设计模式。在不适合的场景（例如简单的一次性操作）强行使用复杂模式（如复杂的领域事件总线），是过度工程化的表现。"
+              "desc": "根据问题的实际复杂度选择设计模式。在不适合的场景（例如简单的一次性操作）强行使用复杂模式（如复杂的领域事件总线），是过度工程化的表现。"
             },
             {
               "name": "简单的架构分层",
-              "description": "采用职责明确、依赖关系清晰的分层架构（如经典的三 / 四层架构），而不是创建大量难以理解和维护的微小服务或模糊的界限。"
+              "desc": "采用职责明确、依赖关系清晰的分层架构（如经典的三 / 四层架构），而不是创建大量难以理解和维护的微小服务或模糊的界限。"
             }
           ],
+          "watchOuts": [],
           "articles": [
             {
               "name": "You Want Modules, Not Microservices",
@@ -62,44 +63,195 @@
         {
           "symbol": "Mo",
           "name": "模块化（Modularity）",
-          "description": "将系统划分为高内聚的单元，通过最小化接口实现各单元的独立推理、替换或演进，分解职责边界，确保关注点分离。",
+          "desc": "将系统划分为高内聚的单元，通过最小化接口实现各单元的独立推理、替换或演进，分解职责边界，确保关注点分离。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Co",
           "name": "可组合性（Composability）",
-          "description": "设计可安全灵活重组的组件，依赖显式契约和类型约束接口，使合法组合始终正确（类似可互换的积木）。与模块化不同，此原则聚焦重组能力。",
+          "desc": "设计可安全灵活重组的组件，依赖显式契约和类型约束接口，使合法组合始终正确（类似可互换的积木）。与模块化不同，此原则聚焦重组能力。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Ex",
           "name": "可扩展性（Extensibility）",
-          "description": "允许用户安全地添加自定义扩展（如插件），而无需修改系统核心。若扩展来源不可信，需通过沙箱隔离保障安全。",
-          "examples": [],
-          "articles": []
+          "desc": "允许用户安全地添加自定义扩展（如插件），而无需修改系统核心。若扩展来源不可信则需通过沙箱隔离保障安全。",
+          "examples": [
+            {
+              "name": "模块化与接口抽象",
+              "desc": "使用接口或抽象类来定义功能契约，而不是依赖具体实现。当需要新增功能时，只需实现相应的接口，而无需修改核心逻辑。例如：定义一个 PaymentProvider 接口，然后为微信支付、支付宝等分别创建支付实现类。"
+            },
+            {
+              "name": "插件架构",
+              "desc": "系统核心提供插件注册和发现的机制，开发者可以按照规范开发独立的插件包，系统在运行时能动态加载这些插件，扩展其功能。例如 vscode、chrome 都拥有强大的插件生态系统，Python 与 Golang 也有相应的插件实现方式"
+            },
+            {
+              "name": "配置驱动与脚本引擎",
+              "desc": "将系统中可能变化的行为参数化，通过配置文件、环境变量、数据库配置项、规则引擎、脚本引擎（如 Lua）来控制。这样，当业务规则变化时，仅需修改配置或脚本，而无需重新编译和部署整个系统。"
+            },
+            {
+              "name": "分层安全隔离（针对非信任扩展）",
+              "desc": "当扩展来自不受信任的第三方时，可以考虑使用沙箱机制来保障安全，通过限制扩展的权限（如文件系统访问、网络访问、系统调用等）来确保即使扩展存在恶意行为或漏洞，也不会危害到主系统"
+            }
+          ],
+          "watchOuts": [
+            {
+              "name": "避免过度设计",
+              "desc": "并非所有部分都需要高度的可扩展性，过度设计会增加系统的复杂性和初期开发成本。应重点关注那些业务变化频繁、技术演进快或需要与外部系统集成的领域。"
+            },
+            {
+              "name": "保证接口清晰稳定",
+              "desc": "扩展接口的设计必须清晰、文档完善，并且尽量保持向后兼容。频繁变更接口会使已有的扩展失效，增加维护成本。"
+            },
+            {
+              "name": "权衡性能与安全",
+              "desc": "动态加载、沙箱隔离等机制可能会带来额外的性能开销。对非信任扩展的权限控制需要非常细致，以在功能灵活性和系统安全之间取得平衡。"
+            }
+          ],
+          "articles": [
+            {
+              "name": "Python & Golang 插件",
+              "author": "Narasux",
+              "year": "2024",
+              "url": "https://narasux.cn/articles/python-and-golang-plugins"
+            }
+          ]
         },
         {
           "symbol": "Pm",
           "name": "策略/机制分离（Policy/Mechanism Separation）",
-          "description": "分离 “做什么”（策略）与 “怎么做”（机制），通过统一接口支持多策略接入同一机制。",
-          "examples": [],
+          "desc": "分离 “做什么”（策略）与 “怎么做”（机制），通过统一接口支持多策略接入同一机制。",
+          "examples": [
+            {
+              "name": "MVC 架构模式",
+              "desc": "在 MVC 模式中，Model（模型）和 View（视图）通常被视为 “策略”，因为它们封装了易变的业务逻辑和显示逻辑。而 Controller（控制器）则更像 “机制”，它提供了协调模型和视图交互的稳定流程和规则，相对不变。"
+            },
+            {
+              "name": "微服务与 RPC 框架",
+              "desc": "诸如 go-micro / trpc 这样的框架，其核心机制是提供服务注册与发现、远程过程调用（RPC）、负载均衡和序列化等通用能力。业务开发者利用这些机制来实现具体的服务，这些服务自身的业务逻辑就是策略。框架机制是稳定的，而业务策略可以千变万化并独立演进。"
+            },
+            {
+              "name": "服务网格",
+              "desc": "像 Istio 这样的服务网格其数据平面（如 Envoy 代理）提供了流量管理、遥测和策略执行的机制。控制平面则允许运维人员通过声明式的 API（如 YAML 配置文件）来定义路由规则、访问控制等策略。"
+            },
+            {
+              "name": "eBPF",
+              "desc": "eBPF 机制允许用户态程序将字节码安全地注入到内核中运行，而无需修改内核源码或编写内核模块。开发者可以基于 eBPF 编写各种策略程序来实现网络观测、性能跟踪、安全监控等复杂功能。"
+            }
+          ],
+          "watchOuts": [
+            {
+              "name": "性能权衡",
+              "desc": "策略与机制的交互可能引入额外开销，需权衡灵活性与效率。"
+            },
+            {
+              "name": "避免过度抽象",
+              "desc": "并非所有系统都需要完全分离，应仅在策略可能频繁变化时应用此原则。"
+            }
+          ],
           "articles": []
         },
         {
           "symbol": "Gr",
           "name": "泛化设计（Generalized Design）",
-          "description": "设计具备显式可变点（如类型、配置项、插件）的核心，使其同时服务多场景，仅在性能/准确性/清晰度有显著收益时特化。",
-          "examples": [],
-          "articles": []
+          "desc": "设计具备显式可变点（如类型、配置项、插件）的核心，使其同时服务多场景，仅在性能 / 准确性 / 清晰度有显著收益时特化。",
+          "examples": [
+            {
+              "name": "Golang 泛型",
+              "desc": "Go 泛型通过类型参数与约束（Sum[T Number]，Number -> ~int | ~float64） + 调用时类型推断（无需显式声明类型），让一份代码能够安全、高效地服务于多种数据类型。"
+            },
+            {
+              "name": "C++ STL（标准模板库）",
+              "desc": "通过模板实现容器（vector、map）和算法（sort、find）的泛化，同一份代码可处理任意数据类型。例如 std::sort 算法无需为每种数据类型重写，仅需自定义比较函数即可适配复杂对象。"
+            },
+            {
+              "name": "消息队列",
+              "desc": "Kafka、RabbitMQ 的核心协议支持多种消息序列化格式（JSON、Avro、Protobuf），生产者与消费者可按需选择格式，平衡效率与可读性。"
+            },
+            {
+              "name": "数学运算库",
+              "desc": "Eigen、NumPy 等数学运算库通过模板或动态分派支持多种数值类型（整数、浮点数、复数），同一矩阵乘法代码可高效运行于不同精度需求场景。"
+            }
+          ],
+          "watchOuts": [
+            {
+              "name": "避免过度抽象与过早优化",
+              "desc": "通用化设计最大的风险之一是 “过度工程”。在需求尚不明确或变化不大的领域，过早地追求极致的通用性会引入不必要的复杂性。关键在于判断哪些部分真正需要通用化。通常只有那些在领域内变化频率高、复用场景多的核心概念（如框架，控制器）才值得投入。对于稳定的、特定的功能（如业务逻辑）则简单的专用设计往往更优。"
+            },
+            {
+              "name": "平衡通用性与特异性（“足够好” 原则）",
+              "desc": "通用化设计的目标不是创造一个 “万能” 的解决方案，而是在满足当前已知需求的前提下，为未来的变化预留 “恰到好处”的扩展能力。接口设计应追求最小化且完备，即只暴露必要的操作，隐藏具体的实现细节。这需要在 “满足所有可能用例” 和 “保持简单性” 之间做出权衡。"
+            },
+            {
+              "name": "以用户（使用者）为中心，而非以技术为中心",
+              "desc": "通用化设计不应成为设计师炫技的工具。其最终目的是让系统对其他开发者或最终用户更易用、更强大。要避免设计出技术上天衣无缝但使用起来却异常晦涩的接口。始终从使用场景出发，确保通用化带来的价值（如灵活性、效率）大于其学习成本和使用复杂度。"
+            }
+          ],
+          "articles": [
+            {
+              "name": "Go 1.18 泛型全面讲解：一篇讲清泛型的全部",
+              "author": "WonderfulSoap",
+              "year": "2022",
+              "url": "https://segmentfault.com/a/1190000041634906"
+            }
+          ]
         },
         {
           "symbol": "Pd",
           "name": "概率设计（Probabilistic Design）",
-          "description": "引入可控随机性以提升效率、可扩展性或简洁性，同时接受可量化的微小错误/损失风险。",
-          "examples": [],
-          "articles": []
+          "desc": "引入可控随机性以提升效率、可扩展性或简洁性，同时接受可量化的微小错误 / 损失风险。",
+          "examples": [
+            {
+              "name": "随机分配 x 负载均衡",
+              "desc": "将请求随机或按加权随机策略分发到后端服务器，能够简化实现、避免单点过载、提高整体吞吐量，但代价是某个连接可能 “运气不佳” 被连续分配到高负载服务器。"
+            },
+            {
+              "name": "布隆过滤器",
+              "desc": "使用多个哈希函数将元素映射到一个位数组中，能使用极小的内存空间快速判断一个元素是否不在某个巨型集合中，其允许一定的 “误报率”（即某个元素实际不在集合中，但误判为存在），但绝无漏报（即元素在集合中但判为不在）。"
+            },
+            {
+              "name": "快速排序算法",
+              "desc": "标准的快速排序算法在最坏情况（如输入数组已排序）下时间复杂度会退化到 O(n²)，但是这种情况的概率极低，该算法在期望和平均情况下都能保持 O(nlogn) 的高效性能。"
+            },
+            {
+              "name": "模糊测试",
+              "desc": "通过向程序输入大量随机、半随机的畸形数据以发现潜在安全漏洞或程序崩溃的测试方法。其能够以相对较低的成本和较高的效率，发现那些通过精心设计的测试用例难以触发的深层边界错误。"
+            },
+            {
+              "name": "机器学习",
+              "desc": "概率论是机器学习的基石之一，例如贝叶斯定理被广泛应用于垃圾邮件过滤、图像识别等分类问题中。这些机器学习算法本质上是通过计算事件在大量数据下发生的概率来进行预测和决策，大语言模型也是这种原理，代价则是不可避免的模型幻觉。"
+            }
+          ],
+          "watchOuts": [
+            {
+              "name": "风险必须可量化与控制",
+              "desc": "引入的随机性其负面后果必须是明确且可测量的，并且其发生概率应被控制在系统可接受的阈值之内。例如，布隆过滤器的误判率是可以预先计算和设定的。"
+            },
+            {
+              "name": "收益必须显著大于风险",
+              "desc": "通过概率设计获得的性能、效率或简洁性提升，必须足以证明承担额外风险的合理性。"
+            },
+            {
+              "name": "避免在关键安全领域滥用",
+              "desc": "在要求绝对确定性或错误会导致灾难性后果的领域（如航天器控制、金融交易）需极其谨慎地使用概率设计。"
+            },
+            {
+              "name": "保证随机源的质量",
+              "desc": "特别是涉及公平性或安全性的场景（如抽奖、加密密钥生成），应使用密码学安全的随机数生成器，而非普通的伪随机数生成器，以防止结果被预测或操纵"
+            }
+          ],
+          "articles": [
+            {
+              "name": "快速排序",
+              "author": "OI Wiki",
+              "year": "2025",
+              "url": "https://oi-wiki.org/basic/quick-sort/"
+            }
+          ]
         }
       ]
     },
@@ -107,62 +259,70 @@
       "symbol": "Eff",
       "name": "效率优化（Efficiency）",
       "color": "orange-200",
-      "description": "聚焦关键环节减少冗余计算，以更低成本达成目标。",
+      "desc": "聚焦关键环节减少冗余计算，以更低成本达成目标。",
       "elements": [
         {
           "symbol": "Sc",
           "name": "可扩展性（Scalability）",
-          "description": "设计系统以处理数据量、流量或节点规模的线性增长，确保成本或延迟接近线性变化。",
+          "desc": "设计系统以处理数据量、流量或节点规模的线性增长，确保成本或延迟接近线性变化。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Rc",
           "name": "计算复用（Reuse of Computation）",
-          "description": "通过缓存、物化中间结果（如索引）或增量更新输出来避免冗余计算，尤其适用于重复或微调输入的场景。",
+          "desc": "通过缓存、物化中间结果（如索引）或增量更新输出来避免冗余计算，尤其适用于重复或微调输入的场景。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Wv",
           "name": "避免无效计算（Work Avoidance）",
-          "description": "跳过不改变外部可观测结果的计算，例如惰性求值（lazy evaluation）和谓词短路（predicate short-circuiting）。",
+          "desc": "跳过不改变外部可观测结果的计算，例如惰性求值（lazy evaluation）和谓词短路（predicate short-circuiting）。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Cc",
           "name": "常见场景特化（Common-Case Specialization）",
-          "description": "识别运行时主导的执行路径或数据项（“热点”），为其创建高效快速路径，同时保留通用路径处理所有场景。",
+          "desc": "识别运行时主导的执行路径或数据项（“热点”），为其创建高效快速路径，同时保留通用路径处理所有场景。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Bo",
           "name": "瓶颈导向优化（Bottleneck-Oriented Optimisation）",
-          "description": "通过端到端性能剖析定位最严格的资源约束，集中优化直至其他环节成为新瓶颈。",
+          "desc": "通过端到端性能剖析定位最严格的资源约束，集中优化直至其他环节成为新瓶颈。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Ha",
           "name": "硬件感知设计（Hardware-Aware Design）",
-          "description": "根据底层硬件特性（如缓存层级、NUMA、SSD、GPU）设计算法与数据结构，适配延迟、带宽、并行性和持久性。",
+          "desc": "根据底层硬件特性（如缓存层级、NUMA、SSD、GPU）设计算法与数据结构，适配延迟、带宽、并行性和持久性。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Op",
           "name": "乐观设计（Optimistic Design）",
-          "description": "假设常见场景会成功执行，跳过协调步骤；仅在假设失败时启用（可能昂贵的）恢复路径。",
+          "desc": "假设常见场景会成功执行，跳过协调步骤；仅在假设失败时启用（可能昂贵的）恢复路径。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "La",
           "name": "学习型近似（Learned Approximation）",
-          "description": "用数据训练的模型替代手工算法，以有限精度损失换取效率或灵活性。",
+          "desc": "用数据训练的模型替代手工算法，以有限精度损失换取效率或灵活性。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         }
       ]
@@ -171,41 +331,46 @@
       "symbol": "Sem",
       "name": "语义规范（Semantics）",
       "color": "yellow-200",
-      "description": "精确定义行为与接口，消除歧义。",
+      "desc": "精确定义行为与接口，消除歧义。",
       "elements": [
         {
           "symbol": "Al",
           "name": "抽象提升（Abstraction Lifting）",
-          "description": "将底层操作封装在高层接口或领域特定语言（DSL）中，通过声明意图而非具体步骤实现功能，支持内部优化与多后端适配。",
+          "desc": "将底层操作封装在高层接口或领域特定语言（DSL）中，通过声明意图而非具体步骤实现功能，支持内部优化与多后端适配。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Lu",
           "name": "语言统一性（Language Homogeneity）",
-          "description": "在核心组件与扩展中采用统一规范的中间表示（IR）或语言，确保语义对齐、工具链兼容，实现跨层优化与复用。",
+          "desc": "在核心组件与扩展中采用统一规范的中间表示（IR）或语言，确保语义对齐、工具链兼容，实现跨层优化与复用。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Se",
           "name": "语义显式接口（Semantically Explicit Interfaces）",
-          "description": "精确定义接口语义（包括副作用可见性、操作顺序、持久性等），支持用户推理调用的真实外部状态，避免隐藏行为（如缓冲/复制）的猜测。",
+          "desc": "精确定义接口语义（包括副作用可见性、操作顺序、持久性等），支持用户推理调用的真实外部状态，避免隐藏行为（如缓冲/复制）的猜测。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Fs",
           "name": "形式化规范（Formal Specification）",
-          "description": "使用数学模型或逻辑描述系统行为，支持严格推理、验证或程序合成。实现机制包括时序逻辑、状态机等形式化方法。",
+          "desc": "使用数学模型或逻辑描述系统行为，支持严格推理、验证或程序合成。实现机制包括时序逻辑、状态机等形式化方法。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Ig",
           "name": "不变性引导的转换（Invariant-Guided Transformation）",
-          "description": "通过形式化不变性驱动代码重构、优化或配置变更，确保语义保真。",
+          "desc": "通过形式化不变性驱动代码重构、优化或配置变更，确保语义保真。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         }
       ]
@@ -214,41 +379,46 @@
       "symbol": "Dist",
       "name": "分布式协调（Distribution）",
       "color": "green-200",
-      "description": "在分布式架构中协调任务与数据。",
+      "desc": "在分布式架构中协调任务与数据。",
       "elements": [
         {
           "symbol": "Lt",
           "name": "位置透明性（Location Transparency）",
-          "description": "隐藏资源的物理位置，客户端通过统一名称或句柄交互。",
+          "desc": "隐藏资源的物理位置，客户端通过统一名称或句柄交互。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Dc",
           "name": "去中心化控制（Decentralised Control）",
-          "description": "将决策权分散至多个节点，避免单点故障或瓶颈。",
+          "desc": "将决策权分散至多个节点，避免单点故障或瓶颈。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Fp",
           "name": "功能就近部署（Function Placement）",
-          "description": "将功能部署在具备必要上下文和资源的节点，确保正确性与效率，避免冗余计算。",
+          "desc": "将功能部署在具备必要上下文和资源的节点，确保正确性与效率，避免冗余计算。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Lo",
           "name": "访问局部性（Locality of Reference）",
-          "description": "将相关数据与操作在时空上紧密放置，维持访问模式并最小化计算与状态分离。",
+          "desc": "将相关数据与操作在时空上紧密放置，维持访问模式并最小化计算与状态分离。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Cz",
           "name": "协调避免（Coordination Avoidance）",
-          "description": "通过识别可独立执行的操作，减少分布式协调需求，同时保证应用层正确性。",
+          "desc": "通过识别可独立执行的操作，减少分布式协调需求，同时保证应用层正确性。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         }
       ]
@@ -257,48 +427,54 @@
       "symbol": "Plan",
       "name": "规划决策（Planning）",
       "color": "emerald-200",
-      "description": "基于目标、成本与约束自动选择方案。",
+      "desc": "基于目标、成本与约束自动选择方案。",
       "elements": [
         {
           "symbol": "Ep",
           "name": "等价重写规划（Equivalence-based Planning）",
-          "description": "在统一中间表示（IR）上应用代数/逻辑重写规则（保持语义等价），延迟最终方案至成本/约束优化阶段。",
+          "desc": "在统一中间表示（IR）上应用代数/逻辑重写规则（保持语义等价），延迟最终方案至成本/约束优化阶段。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Cm",
           "name": "成本驱动规划（Cost-based Planning）",
-          "description": "通过成本模型（如能耗、资金）指导设计/配置/执行策略的选择，避免穷举搜索。",
+          "desc": "通过成本模型（如能耗、资金）指导设计/配置/执行策略的选择，避免穷举搜索。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Cp",
           "name": "约束求解规划（Constraint-based Planning）",
-          "description": "将决策编码为硬/软约束，依赖求解器（如ILP/SMT）寻找可行或最优解。",
+          "desc": "将决策编码为硬/软约束，依赖求解器（如ILP/SMT）寻找可行或最优解。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Gd",
           "name": "目标导向规划（Goal-Directed Planning）",
-          "description": "接受对目标状态的声明式描述，自动合成操作序列，向用户屏蔽实现细节。",
+          "desc": "接受对目标状态的声明式描述，自动合成操作序列，向用户屏蔽实现细节。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Bb",
           "name": "黑盒调优（Black-Box Tuning）",
-          "description": "当缺乏分析型成本模型时，通过测量目标系统上的候选方案迭代优化（启发式/贝叶斯搜索）。",
+          "desc": "当缺乏分析型成本模型时，通过测量目标系统上的候选方案迭代优化（启发式/贝叶斯搜索）。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Ah",
           "name": "建议性提示（Advisory Hinting）",
-          "description": "提供非绑定性提示以提升性能，忽略时不改变正确性。",
+          "desc": "提供非绑定性提示以提升性能，忽略时不改变正确性。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         }
       ]
@@ -307,48 +483,54 @@
       "symbol": "Oper",
       "name": "可运维性（Operability）",
       "color": "cyan-200",
-      "description": "无中断观察、自适应调整与系统演进。",
+      "desc": "无中断观察、自适应调整与系统演进。",
       "elements": [
         {
           "symbol": "Ad",
           "name": "自适应处理（Adaptive Processing）",
-          "description": "监控运行时状态，自动调整参数或策略。",
+          "desc": "监控运行时状态，自动调整参数或策略。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Ec",
           "name": "弹性伸缩（Elasticity）",
-          "description": "根据需求与成本目标自动调整资源分配。",
+          "desc": "根据需求与成本目标自动调整资源分配。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Wa",
           "name": "负载感知优化（Workload-Aware Optimisation）",
-          "description": "持续观测负载特征（偏斜、局部性等），动态适配数据布局或资源分配。",
+          "desc": "持续观测负载特征（偏斜、局部性等），动态适配数据布局或资源分配。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Au",
           "name": "自动化与自治（Automation and Autonomy）",
-          "description": "系统自主执行例行任务，通常基于日志或用户示例学习。",
+          "desc": "系统自主执行例行任务，通常基于日志或用户示例学习。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Ho",
           "name": "人类可观测性（Human Observability）",
-          "description": "暴露系统内部状态（指标、跟踪链路等），提升可观测性与调试能力。",
+          "desc": "暴露系统内部状态（指标、跟踪链路等），提升可观测性与调试能力。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Ev",
           "name": "可演进性（Evolvability）",
-          "description": "支持系统变更时最小化停机或重写，且不破坏现有客户端契约。",
+          "desc": "支持系统变更时最小化停机或重写，且不破坏现有客户端契约。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         }
       ]
@@ -357,34 +539,38 @@
       "symbol": "Rel",
       "name": "可靠性保障（Reliability）",
       "color": "sky-200",
-      "description": "在故障、并发及局部失效下保持正确性。",
+      "desc": "在故障、并发及局部失效下保持正确性。",
       "elements": [
         {
           "symbol": "Ft",
           "name": "容错性（Fault Tolerance）",
-          "description": "在组件故障时维持系统运行（可降级）。",
+          "desc": "在组件故障时维持系统运行（可降级）。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Is",
           "name": "隔离保证正确性（Isolation for Correctness）",
-          "description": "在组件故障时维持系统运行（可降级）。",
+          "desc": "在组件故障时维持系统运行（可降级）。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "At",
           "name": "原子执行（Atomic Execution）",
-          "description": "将操作组包装为原子单元（全生效或全无效）。",
+          "desc": "将操作组包装为原子单元（全生效或全无效）。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Cr",
           "name": "一致性松弛（Consistency Relaxation）",
-          "description": "在文档化范围内放松强一致性，以提升性能或可用性。",
+          "desc": "在文档化范围内放松强一致性，以提升性能或可用性。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         }
       ]
@@ -393,48 +579,54 @@
       "symbol": "Sec",
       "name": "安全防护（Security）",
       "color": "fuchsia-200",
-      "description": "通过权限约束与隔离机制保障安全性与完整性。",
+      "desc": "通过权限约束与隔离机制保障安全性与完整性。",
       "elements": [
         {
           "symbol": "Sy",
           "name": "隔离实现安全（Security via Isolation）",
-          "description": "强制强边界阻止故障或恶意代码扩散。",
+          "desc": "强制强边界阻止故障或恶意代码扩散。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Ac",
           "name": "访问控制与审计（Access Control and Auditing）",
-          "description": "定义权限并记录每次访问以实现问责。",
+          "desc": "定义权限并记录每次访问以实现问责。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Lp",
           "name": "最小权限（Least Privilege）",
-          "description": "仅授予任务所需最小权限，缩小故障半径。",
+          "desc": "仅授予任务所需最小权限，缩小故障半径。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Tq",
           "name": "法定人数信任（Trust via Quorum）",
-          "description": "依赖多节点共识而非单一权威。",
+          "desc": "依赖多节点共识而非单一权威。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Cf",
           "name": "保守默认值（Conservative Defaults）",
-          "description": "默认采用限制性安全设置，专家可手动启用高风险模式。",
+          "desc": "默认采用限制性安全设置，专家可手动启用高风险模式。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         },
         {
           "symbol": "Sa",
           "name": "构造保障安全（Safety by Construction）",
-          "description": "通过代码/数据结构设计使整类错误在编译时即不可能发生。",
+          "desc": "通过代码/数据结构设计使整类错误在编译时即不可能发生。",
           "examples": [],
+          "watchOuts": [],
           "articles": []
         }
       ]

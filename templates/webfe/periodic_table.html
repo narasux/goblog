@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <script src="/static/js/tailwindcss.js"></script>
     <title>Narasux Blogs</title>
+    <link rel="icon" href="/static/image/favicon.png" type="image/x-icon" />
     <style>
       .hover-grow:hover {
         transform: scale(1.2);
@@ -86,16 +87,27 @@
     if (!examples || examples.length === 0) return "";
     let html = `<h3 class="text-gray-800 text-lg mt-6 mb-2">🌰 举些例子：</h3>`;
     examples.forEach(example => {
-      html += `<p class="my-2 text-gray-700"><span class="font-medium">${example.name}</span>：${example.description}</p>`;
+      html += `<p class="my-2 text-gray-700"><span class="font-medium">${example.name}</span>：${example.desc}</p>`;
     });
     return html;
   }
+
+  function generateWatchOutsSection(watchOuts) {
+    if (!watchOuts || watchOuts.length === 0) return "";
+    let html = `<h3 class="text-gray-800 text-lg mt-6 mb-2">⚠️ 注意事项：</h3>`;
+    watchOuts.forEach(watchOut => {
+      html += `<p class="my-2 text-gray-700"><span class="font-medium">${watchOut.name}</span>：${watchOut.desc}</p>`;
+    });
+    return html;
+  }
+
+
 
   function generateArticlesSection(articles) {
     if (!articles || articles.length === 0) return "";
     let html = `<h3 class="text-gray-800 text-lg mt-6 mb-2">📖 相关文章：</h3><ul class="text-gray-800">`;
     articles.forEach(article => {
-      html += `<li>- <a class="text-sky-500" href="${article.url}" target="_blank">${article.author}. (${article.year}). ${article.name}</a></li>`;
+      html += `<li>• <a class="text-sky-500" href="${article.url}" target="_blank">${article.author}. (${article.year}). ${article.name}</a></li>`;
     });
     html += `</ul>`;
     return html;
@@ -107,8 +119,9 @@
     detailDiv.innerHTML = `
       <div class="bg-white shadow-lg mx-8 p-6 border border-gray-200 rounded-xl">
         <h2 class="text-gray-800 text-xl my-2">${ele.symbol}：${ele.name}</h2>
-        <p class="text-gray-700">${ele.description}</p>
+        <p class="text-gray-700">${ele.desc}</p>
         ${generateExamplesSection(ele.examples)}
+        ${generateWatchOutsSection(ele.watchOuts)}
         ${generateArticlesSection(ele.articles)}
       </div>
     `;

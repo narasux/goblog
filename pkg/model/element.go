@@ -3,7 +3,13 @@ package model
 // Example 例子
 type Example struct {
 	Name        string `json:"name"`
-	Description string `json:"description"`
+	Description string `json:"desc"`
+}
+
+// WatchOut 注意事项
+type WatchOut struct {
+	Name        string `json:"name"`
+	Description string `json:"desc"`
 }
 
 // ArticleRef 文章引用
@@ -18,8 +24,9 @@ type ArticleRef struct {
 type Element struct {
 	Symbol      string       `json:"symbol"`
 	Name        string       `json:"name"`
-	Description string       `json:"description"`
+	Description string       `json:"desc"`
 	Examples    []Example    `json:"examples"`
+	WatchOuts   []WatchOut   `json:"watchOuts"`
 	Articles    []ArticleRef `json:"articles"`
 }
 
@@ -28,7 +35,7 @@ type ElementGroup struct {
 	Symbol      string    `json:"symbol"`
 	Name        string    `json:"name"`
 	Color       string    `json:"color"`
-	Description string    `json:"description"`
+	Description string    `json:"desc"`
 	Elements    []Element `json:"elements"`
 }
 
