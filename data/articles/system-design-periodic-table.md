@@ -4,7 +4,7 @@
 
 佐治亚理工学院的 Jarulraj 及其团队完成了一项开创性工作：构建出一套软件系统设计原则的 “元素周期表”，旨在提炼并整合这些共通的底层逻辑。
 
-![img](/static/image/blog/periodic_table.png)
+[![img](/static/image/blog/periodic_table.png)](https://narasux.cn/periodic-table)
 
 该项目通过对上百篇横跨多个计算机系统领域的经典学术文献进行梳理，识别并归纳出 40 余个满足抽象性与通用性条件的设计原则。
 
@@ -21,3 +21,4 @@
 ## 参考资料
 
 - [Github: jarulraj/periodic-table](https://github.com/jarulraj/periodic-table)
+- [Narasux: Elements of System Design](https://narasux.cn/periodic-table)
