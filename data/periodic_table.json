@@ -50,7 +50,20 @@
               "desc": "采用职责明确、依赖关系清晰的分层架构（如经典的三 / 四层架构），而不是创建大量难以理解和维护的微小服务或模糊的界限。"
             }
           ],
-          "watchOuts": [],
+          "watchOuts": [
+            {
+              "name": "避免因过度简化损害核心需求",
+              "desc": "简单性不能以牺牲系统的稳定性、安全性或核心功能为代价。例如：为了代码简单而忽略必要的错误处理。"
+            },
+            {
+              "name": "平衡简单性与前瞻性",
+              "desc": "在确保满足当前需求的前提下，对于确知会很快发生的核心扩展点，可进行适度设计，但要基于证据而非猜测。"
+            },
+            {
+              "name": "简单性不等于容易实现",
+              "desc": "寻找并实施那个最简单、最优雅的解决方案，有时更需要深厚的功力和更深入的思考，这比堆砌复杂性更具挑战性。"
+            }
+          ],
           "articles": [
             {
               "name": "You Want Modules, Not Microservices",
@@ -121,11 +134,11 @@
             },
             {
               "name": "Unix 管道机制",
-              "desc": "Unix 管道机制允许用户将多个命令（如 grep、sort、uniq）连接起来，将一个命令的输出作为另一个命令的输入：cat tmp.txt | grep 'foo' | sort | uniq"
+              "desc": "Unix 管道机制允许用户将多个命令（如 grep、sort、uniq）连接起来，将一个命令的输出作为另一个命令的输入：<code class=\"bg-gray-100 text-orange-600\">cat tmp.txt | grep 'foo' | sort | uniq</code>"
             },
             {
               "name": "Django QuerySet",
-              "desc": "Django ORM 提供了 QuerySet 类，其可以通过链式调用进行组合：User.objects.filter(is_active=True).exclude(email__contains='@example.com')。"
+              "desc": "Django ORM 提供了 QuerySet 类，其可以通过链式调用进行组合：<code class=\"bg-gray-100 text-orange-600\">User.objects.filter(is_active=True).exclude(email__contains='@example.com')</code>"
             },
             {
               "name": "物联网 (IoT) 平台中的规则引擎",
@@ -413,16 +426,83 @@
           "symbol": "Rc",
           "name": "计算复用（Reuse of Computation）",
           "desc": "通过缓存、物化中间结果（如索引）或增量更新输出来避免冗余计算，尤其适用于重复或微调输入的场景。",
-          "examples": [],
-          "watchOuts": [],
-          "articles": []
+          "examples": [
+            {
+              "name": "HTTP 请求结果缓存",
+              "desc": "缓存请求结果，相同请求直接复用，避免重复计算，提升效率并减轻服务器负担。"
+            },
+            {
+              "name": "数据库与数据系统",
+              "desc": "物化视图可以预先计算并存储复杂查询的结果；数据库索引（如B+树）通过排序复用加速查询。"
+            },
+            {
+              "name": "分布式计算与大数据",
+              "desc": "在批处理平台（如：Dryad、Hadoop）中，缓存和复用之前作业的中间结果，仅计算新增数据（Delta）的部分。"
+            },
+            {
+              "name": "算法与数据结构",
+              "desc": "记忆化技术缓存函数结果，相同参数直接返回缓存值，避免重复计算。典型应用如斐波那契数列的数组实现。"
+            }
+          ],
+          "watchOuts": [
+            {
+              "name": "权衡空间与时间",
+              "desc": "计算复用需要消耗存储空间来缓存结果。需评估性能收益是否值得存储成本，内存受限环境（如：嵌入式设备）需格外谨慎。"
+            },
+            {
+              "name": "缓存的有效性与一致性",
+              "desc": "数据变化时需及时更新缓存，避免用户获取过时数据。需设计合理的缓存失效策略（过期时间 / 事件通知）。"
+            },
+            {
+              "name": "避免过度优化与滥用",
+              "desc": "缓存会增加系统复杂度，并非所有计算都值得复用。若计算本身很快而缓存开销更大，复用反而会成为负优化。"
+            }
+          ],
+          "articles": [
+            {
+              "name": "程序设计中的计算复用（Computational Reuse）",
+              "author": "CodingLabs",
+              "year": "2011",
+              "url": "https://www.cnblogs.com/leoo2sk/archive/2011/03/03/computational-reuse.html"
+            }
+          ]
         },
         {
           "symbol": "Wv",
           "name": "避免无效计算（Work Avoidance）",
           "desc": "跳过不改变外部可观测结果的计算，例如惰性求值（lazy evaluation）和谓词短路（predicate short-circuiting）。",
-          "examples": [],
-          "watchOuts": [],
+          "examples": [
+            {
+              "name": "惰性求值",
+              "desc": "推迟计算直到结果被实际使用，如生成无限序列时按需计算元素，Python 的 <code class=\"bg-gray-100 text-orange-600\">yield</code> 关键字是典型实现。"
+            },
+            {
+              "name": "谓词短路",
+              "desc": "逻辑表达式在确定结果后立即终止计算。如 <code class=\"bg-gray-100 text-orange-600\">if (x != null && x.isEmpty()) </code>，若 x 为 null 则跳过 isEmpty() 检查，一般原则是轻量计算在前，重负载计算在后。"
+            },
+            {
+              "name": "延迟加载",
+              "desc": "资源密集型对象（如图片、数据库连接）仅在首次访问时初始化。例如网页中的图片懒加载，当用户滚动到可见区域时才加载图片。"
+            },
+            {
+              "name": "缓存结果",
+              "desc": "缓存重复计算结果，后续请求直接返回缓存值。如 HTTP 缓存中，服务器在 Header 中设置 Cache-Control 可使客户端在有效期内使用本地副本，避免重复请求。"
+            }
+          ],
+          "watchOuts": [
+            {
+              "name": "正确性优先",
+              "desc": "确保跳过的计算确实不影响外部可见行为；在并发环境中，延迟初始化可能引发竞态条件，需通过同步机制保障安全。"
+            },
+            {
+              "name": "避免过度优化",
+              "desc": "工作规避可能增加代码复杂度（如引入回调、状态管理），若计算成本低，直接执行可能比规避机制更简单高效。"
+            },
+            {
+              "name": "资源管理",
+              "desc": "延迟加载可能导致资源未及时释放（如数据库连接池耗尽）。需设置超时机制或预加载关键资源。"
+            }
+          ],
           "articles": []
         },
         {

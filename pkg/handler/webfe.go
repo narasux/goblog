@@ -101,8 +101,8 @@ func RetrieveArticle(c *gin.Context) {
 	})
 }
 
-// PeriodicTable 软件设计元素周期表
-func PeriodicTable(c *gin.Context) {
+// GetPeriodicTable 软件设计元素周期表
+func GetPeriodicTable(c *gin.Context) {
 	logger := logging.GetSystemLogger()
 
 	content, err := os.ReadFile(filepath.Join(envs.BlogDataBaseDir, "periodic_table.json"))

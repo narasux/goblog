@@ -43,7 +43,7 @@ func InitRouter() {
 		// 博客文章详情
 		webfeRg.GET("articles/:id", handler.RetrieveArticle)
 		// 软件系统设计元素周期表
-		webfeRg.GET("periodic-table", handler.PeriodicTable)
+		webfeRg.GET("periodic-table", handler.GetPeriodicTable)
 		// RSS
 		webfeRg.GET("rss", handler.GetRSS)
 	}
