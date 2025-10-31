@@ -1,5 +1,14 @@
 [
   {
+    "id": "system-design-periodic-table",
+    "category": "技术分享",
+    "tags": ["SystemArch"],
+    "title": "计算机系统设计中的元素周期表",
+    "desc": "本文介绍一种新的分类归纳计算机系统设计要素的方法",
+    "updateAt": "2025-10-08",
+    "content": ""
+  },
+  {
     "id": "celery-task-source-code-note",
     "category": "技术分享",
     "tags": ["Python", "Celery"],

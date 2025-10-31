@@ -101,12 +101,16 @@ func RetrieveArticle(c *gin.Context) {
 	})
 }
 
-// PeriodicTable 软件设计元素周期表
-func PeriodicTable(c *gin.Context) {
+// GetPeriodicTable 软件设计元素周期表
+func GetPeriodicTable(c *gin.Context) {
+	logger := logging.GetSystemLogger()
+
 	content, err := os.ReadFile(filepath.Join(envs.BlogDataBaseDir, "periodic_table.json"))
 	if err != nil {
 		// 加载不到文件，也没必要报错，就提示功能开发中 :D
 		c.HTML(http.StatusOK, "coming_soon.html", nil)
+		// 打印错误日志
+		logger.Errorf("failed to load periodic table: %s", err.Error())
 		return
 	}
 
@@ -114,6 +118,8 @@ func PeriodicTable(c *gin.Context) {
 	if err = json.Unmarshal(content, &periodicTable); err != nil {
 		// 加载不到文件，也没必要报错，就提示功能开发中 :D
 		c.HTML(http.StatusOK, "coming_soon.html", nil)
+		// 打印错误日志
+		logger.Errorf("failed to unmarshal periodic table: %s", err.Error())
 		return
 	}
 
