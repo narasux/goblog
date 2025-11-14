@@ -1,5 +1,14 @@
 [
   {
+    "id": "multiple-processes-in-docker-container",
+    "category": "技术分享",
+    "tags": ["Docker"],
+    "title": "Docker 容器内多进程服务管理",
+    "desc": "本文介绍数种容器内管理多进程的方式",
+    "updateAt": "2025-11-12",
+    "content": ""
+  },
+  {
     "id": "system-design-periodic-table",
     "category": "技术分享",
     "tags": ["SystemArch"],
