@@ -7,8 +7,13 @@ import (
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
+	"github.com/microcosm-cc/bluemonday"
 )
 
+// 创建 HTML 清理策略（UGC 模式，允许常见安全标签）
+var htmlSanitizer = createSanitizer()
+
+// ToHTML 将 Markdown 转换为 HTML
 func ToHTML(content []byte) string {
 	extensions := parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock
 	p := parser.NewWithExtensions(extensions)
@@ -18,7 +23,28 @@ func ToHTML(content []byte) string {
 	opts := html.RendererOptions{Flags: htmlFlags}
 	renderer := html.NewRenderer(opts)
 
-	return wrapTailwindClass(patchMermaidClass(string(markdown.Render(doc, renderer))))
+	rawHTML := string(markdown.Render(doc, renderer))
+
+	// 清理 HTML，移除危险标签和属性（XSS 防护）
+	sanitizedHTML := htmlSanitizer.Sanitize(rawHTML)
+
+	return wrapTailwindClass(patchMermaidClass(sanitizedHTML))
+}
+
+// createSanitizer 创建 HTML 清理策略
+func createSanitizer() *bluemonday.Policy {
+	p := bluemonday.UGCPolicy()
+	// 允许代码块的 class 属性（用于语法高亮）
+	regex := regexp.MustCompile(`^(language-[a-zA-Z0-9_-]+|mermaid|[a-zA-Z0-9_\- ]+)$`)
+	p.AllowAttrs("class").Matching(regex).OnElements("code", "pre", "span")
+	// 允许图片
+	p.AllowImages()
+	// 允许链接在新标签页打开
+	p.AllowAttrs("target").Matching(regexp.MustCompile(`^_blank$`)).OnElements("a")
+	p.AllowAttrs("rel").Matching(regexp.MustCompile(`^noopener noreferrer$`)).OnElements("a")
+	// 允许 id 属性（用于标题锚点）
+	p.AllowAttrs("id").Matching(regexp.MustCompile(`^[a-zA-Z0-9_-]+$`)).Globally()
+	return p
 }
 
 // gomarkdown 会把 mermaid 块转换成 <code class="language-mermaid">，这其实是不正确的，应该是 <code class="mermaid">
@@ -26,7 +52,8 @@ func patchMermaidClass(htmlContent string) string {
 	return strings.ReplaceAll(htmlContent, "<code class=\"language-mermaid\">", "<code class=\"mermaid\">")
 }
 
-var FullMatchHtmlTagClassMap = map[string]string{
+// 完全匹配 Html 标签的情况
+var fullMatchHtmlTagClassMap = map[string]string{
 	"p":   "my-2 mx-2",
 	"ol":  "pl-1 list-decimal list-inside",
 	"ul":  "pl-4 list-disc",
@@ -43,7 +70,8 @@ var FullMatchHtmlTagClassMap = map[string]string{
 	"td":    "border border-gray-500 px-4 py-2",
 }
 
-var PrefixMatchHtmlTagClassMap = map[string]string{
+// 前缀匹配 Html 标签的情况
+var prefixMatchHtmlTagClassMap = map[string]string{
 	"h1":  "mt-6 mb-4 font-semibold text-3xl",
 	"h2":  "mt-6 mb-4 font-semibold text-2xl",
 	"h3":  "mt-6 mb-4 font-semibold text-xl",
@@ -60,11 +88,11 @@ var codeTagAdditionalClass = "p-4 rounded-xl"
 // wrapTailwindClass 为 markdown 转换成的 html 中的标签添加 tailwind css 类
 func wrapTailwindClass(htmlContent string) string {
 	// 前缀匹配的情况
-	for tagName, class := range PrefixMatchHtmlTagClassMap {
+	for tagName, class := range prefixMatchHtmlTagClassMap {
 		htmlContent = strings.ReplaceAll(htmlContent, "<"+tagName, "<"+tagName+" class=\""+class+"\"")
 	}
 	// 完全匹配的情况
-	for tagName, class := range FullMatchHtmlTagClassMap {
+	for tagName, class := range fullMatchHtmlTagClassMap {
 		htmlContent = strings.ReplaceAll(htmlContent, "<"+tagName+">", "<"+tagName+" class=\""+class+"\">")
 	}
 	// 对带有 language 标识的 code 标签特殊处理

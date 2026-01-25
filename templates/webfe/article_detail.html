@@ -222,26 +222,40 @@
         return date.toLocaleDateString('zh-CN');
       }
 
+      // HTML 转义函数，防止 XSS
+      function escapeHTML(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
       // 渲染单条评论
       async function renderComment(comment) {
         const isOwner = currentUser && comment.user && comment.user.id === currentUser.id;
-        const replyPrefix = comment.parent ? `<p class="text-sm text-sky-600 mb-2">回复 @${comment.parent.user.username}</p>` : '';
+        // 使用 escapeHTML 转义用户名和内容
+        const escapedParentUsername = comment.parent ? escapeHTML(comment.parent.user.username) : '';
+        const escapedParentContent = comment.parent ? escapeHTML(comment.parent.content) : '';
+        const replyPrefix = comment.parent ? `<p class="text-sm text-sky-600 mb-2">回复 @${escapedParentUsername}</p>` : '';
         const parentPreview = comment.parent ? `
           <div class="mt-2 p-2 bg-gray-100 rounded text-sm text-gray-600 line-clamp-3 cursor-pointer hover:bg-gray-200" onclick="scrollToComment(${comment.parent.id})">
-            <span class="font-semibold">${comment.parent.user.username}:</span> ${comment.parent.content}
+            <span class="font-semibold">${escapedParentUsername}:</span> ${escapedParentContent}
           </div>
         ` : '';
 
         const htmlContent = await markdownToHTML(comment.content);
+        // 转义用户信息，防止 XSS
+        const escapedUsername = escapeHTML(comment.user.username);
+        const escapedAvatarURL = escapeHTML(comment.user.avatarURL);
 
         return `
           <div id="comment-${comment.id}" class="comment-item mb-6 pb-6 border-b border-gray-200 last:border-0">
             <div class="flex">
-              <img src="${comment.user.avatarURL}" alt="${comment.user.username}" class="w-10 h-10 rounded-full mr-4 flex-shrink-0">
+              <img src="${escapedAvatarURL}" alt="${escapedUsername}" class="w-10 h-10 rounded-full mr-4 flex-shrink-0">
               <div class="flex-1">
                 <div class="flex items-center justify-between mb-2">
                   <div>
-                    <span class="font-semibold text-gray-700">${comment.user.username}</span>
+                    <span class="font-semibold text-gray-700">${escapedUsername}</span>
                     <span class="text-sm text-gray-500 ml-2">${formatRelativeTime(comment.createdAt)}</span>
                   </div>
                   ${isOwner ? `
