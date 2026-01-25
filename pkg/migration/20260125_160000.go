@@ -1,0 +1,29 @@
+// Package migration stores all database migrations
+package migration
+
+import (
+	"github.com/go-gormigrate/gormigrate/v2"
+	"gorm.io/gorm"
+
+	"github.com/narasux/goblog/pkg/infras/database"
+	"github.com/narasux/goblog/pkg/model"
+)
+
+func init() {
+	// Do Not Edit Migration ID!
+	migrationID := "20260125_160000"
+
+	database.RegisterMigration(&gormigrate.Migration{
+		ID: migrationID,
+		Migrate: func(tx *gorm.DB) error {
+			logApplying(migrationID)
+
+			return tx.AutoMigrate(&model.Comment{})
+		},
+		Rollback: func(tx *gorm.DB) error {
+			logRollingBack(migrationID)
+
+			return tx.Migrator().DropTable(&model.Comment{})
+		},
+	})
+}
