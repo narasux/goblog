@@ -13,6 +13,7 @@ import (
 	"github.com/gorilla/feeds"
 	"github.com/samber/lo"
 
+	"github.com/narasux/goblog/pkg/common/auth"
 	"github.com/narasux/goblog/pkg/envs"
 	"github.com/narasux/goblog/pkg/infras/database"
 	"github.com/narasux/goblog/pkg/logging"
@@ -23,9 +24,10 @@ import (
 
 // GetHomePage 获取主页
 func GetHomePage(c *gin.Context) {
-	c.HTML(http.StatusOK, "index.html", map[string]string{
+	c.HTML(http.StatusOK, "index.html", gin.H{
 		"googleSiteVerificationCode": envs.GoogleSiteVerificationCode,
 		"baiduSiteVerificationCode":  envs.BaiduSiteVerificationCode,
+		"user":                       auth.GetLoginUser(c),
 	})
 }
 
@@ -59,8 +61,11 @@ func ListArticles(c *gin.Context) {
 		return item.ArticleID, item.Count
 	})
 
-	c.HTML(http.StatusOK, "articles.html", map[string]any{
-		"articles": articles, "viewCntMap": viewCntMap, "likeCntMap": likeCntMap,
+	c.HTML(http.StatusOK, "articles.html", gin.H{
+		"articles":   articles,
+		"viewCntMap": viewCntMap,
+		"likeCntMap": likeCntMap,
+		"user":       auth.GetLoginUser(c),
 	})
 }
 
@@ -95,9 +100,10 @@ func RetrieveArticle(c *gin.Context) {
 		}
 	}
 
-	c.HTML(http.StatusOK, "article_detail.html", map[string]any{
+	c.HTML(http.StatusOK, "article_detail.html", gin.H{
 		"article":         article,
 		"mermaidRequired": strings.Contains(article.Content, "mermaid"),
+		"user":            auth.GetLoginUser(c),
 	})
 }
 
@@ -108,7 +114,7 @@ func GetPeriodicTable(c *gin.Context) {
 	content, err := os.ReadFile(filepath.Join(envs.BlogDataBaseDir, "periodic_table.json"))
 	if err != nil {
 		// 加载不到文件，也没必要报错，就提示功能开发中 :D
-		c.HTML(http.StatusOK, "coming_soon.html", nil)
+		c.HTML(http.StatusOK, "coming_soon.html", gin.H{"user": auth.GetLoginUser(c)})
 		// 打印错误日志
 		logger.Errorf("failed to load periodic table: %s", err.Error())
 		return
@@ -117,13 +123,18 @@ func GetPeriodicTable(c *gin.Context) {
 	var periodicTable model.ElementPeriodicTable
 	if err = json.Unmarshal(content, &periodicTable); err != nil {
 		// 加载不到文件，也没必要报错，就提示功能开发中 :D
-		c.HTML(http.StatusOK, "coming_soon.html", nil)
+		c.HTML(http.StatusOK, "coming_soon.html", gin.H{"user": auth.GetLoginUser(c)})
 		// 打印错误日志
 		logger.Errorf("failed to unmarshal periodic table: %s", err.Error())
 		return
 	}
 
-	c.HTML(http.StatusOK, "periodic_table.html", periodicTable)
+	c.HTML(http.StatusOK, "periodic_table.html", gin.H{
+		"Name":   periodicTable.Name,
+		"Source": periodicTable.Source,
+		"Groups": periodicTable.Groups,
+		"user":   auth.GetLoginUser(c),
+	})
 }
 
 // GetRSS 获取 RSS

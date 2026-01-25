@@ -20,6 +20,8 @@ func InitRouter() {
 	router.Use(middleware.Logger())
 	router.Use(middleware.Cors())
 	router.Use(gin.Recovery())
+	// 添加认证中间件（可选认证，不强制）
+	router.Use(middleware.Auth())
 
 	// 设置静态文件
 	router.Static("/static", envs.StaticFileBaseDir)
@@ -31,6 +33,19 @@ func InitRouter() {
 	router.NoRoute(handler.Get404)
 	// robots.txt
 	router.GET("robots.txt", handler.GetRobotsTxt)
+
+	// auth 路由（GitHub OAuth）
+	{
+		authRg := router.Group("auth")
+		// GitHub OAuth 登录
+		authRg.GET("github/login", handler.GitHubLogin)
+		// GitHub OAuth 回调
+		authRg.GET("github/callback", handler.GitHubCallback)
+		// 登出
+		authRg.POST("logout", handler.Logout)
+		// 支持 GET 方式登出（方便前端跳转）
+		authRg.GET("logout", handler.Logout)
+	}
 
 	// webfe 路由
 	{
@@ -53,6 +68,8 @@ func InitRouter() {
 		apiRg := router.Group("apis")
 		// 点赞博客文章
 		apiRg.POST("articles/:id/like", handler.LikeArticle)
+		// 获取当前登录用户信息
+		apiRg.GET("user", handler.GetCurrentUser)
 	}
 
 	if err := router.Run(":" + envs.ServerPort); err != nil {

@@ -83,4 +83,22 @@ var (
 	// 访问 https://ziyuan.baidu.com/site/index#/ 添加网站，走到第三步，
 	// 验证方式选 HTML 标签即可获取 Code（content 内容），仅用于验证所有权，不敏感
 	BaiduSiteVerificationCode = envx.Get("BAIDU_SITE_VERIFICATION_CODE", "")
+
+	// ========== GitHub OAuth 配置 ==========
+
+	// GithubClientID GitHub OAuth App Client ID
+	GithubClientID = envx.Get("GITHUB_CLIENT_ID", "")
+	// GithubClientSecret GitHub OAuth App Client Secret
+	GithubClientSecret = envx.Get("GITHUB_CLIENT_SECRET", "")
+	// GithubCallbackURL GitHub OAuth 回调地址
+	GithubCallbackURL = envx.Get("GITHUB_CALLBACK_URL", "")
+
+	// ========== Session 配置 ==========
+
+	// SessionSecret Session 加密密钥
+	SessionSecret = envx.Get("SESSION_SECRET", "goblog-session-secret-key")
+	// SessionMaxAge Session 最大有效期（秒），默认 1 天
+	SessionMaxAge = envx.GetInt("SESSION_MAX_AGE", 86400)
+	// SessionCookieName Session Cookie 名称
+	SessionCookieName = envx.Get("SESSION_COOKIE_NAME", "goblog_session")
 )
