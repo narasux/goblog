@@ -66,10 +66,22 @@ func InitRouter() {
 	// api 路由
 	{
 		apiRg := router.Group("apis")
-		// 点赞博客文章
-		apiRg.POST("articles/:id/like", handler.LikeArticle)
 		// 获取当前登录用户信息
 		apiRg.GET("user", handler.GetCurrentUser)
+
+		// Markdown 转 HTML
+		apiRg.POST("markdown/to-html", handler.MarkdownToHTML)
+
+		// 点赞博客文章
+		apiRg.POST("articles/:id/like", handler.LikeArticle)
+		// 获取文章的所有评论
+		apiRg.GET("articles/:id/comments", handler.GetArticleComments)
+		// 创建新评论
+		apiRg.POST("articles/:id/comments", handler.CreateComment)
+		// 更新评论
+		apiRg.PUT("comments/:id", handler.UpdateComment)
+		// 删除评论
+		apiRg.DELETE("comments/:id", handler.DeleteComment)
 	}
 
 	if err := router.Run(":" + envs.ServerPort); err != nil {

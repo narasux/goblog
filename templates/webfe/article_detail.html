@@ -5,6 +5,7 @@
     <script src="/static/js/tailwindcss.js"></script>
     <script src="/static/js/highlight.min.js"></script>
     <script src="/static/js/axios.min.js"></script>
+    <script src="/static/js/marked.min.js"></script>
     <!-- Mermaid 比较耗时，如果非必须则不加载-->
     {{- if .mermaidRequired }}
     <script src="/static/js/mermaid.min.js"></script>
@@ -31,9 +32,95 @@
               loading...
             </div>
           </div>
-          <div class="mx-auto my-5 overflow-x-auto rounded-xl bg-sky-50 px-5 shadow-md">
-            <div class="mx-auto my-10 font-mono text-gray-700 flex flex-wrap justify-center">
-              🚀 评论功能开发中～
+          <div class="mx-auto my-5 py-5 overflow-x-auto rounded-xl bg-sky-50 px-5 shadow-md">
+            <!-- 评论区域 -->
+            <div id="comments-section">
+              <!-- 评论列表 -->
+              <div id="comments-list"></div>
+
+              <!-- 评论输入区域 -->
+              <div id="comment-input-section" class="mt-8 pt-6 border-t border-gray-300">
+                <div id="login-prompt" class="text-center py-8">
+                  <p class="text-gray-600 mb-4">请登录后发表评论</p>
+                  <a href="/auth/github/login?redirect=/articles/{{ .article.ID }}" class="px-6 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors inline-flex items-center">
+                    <i class="fab fa-github mr-2"></i>
+                    GitHub 登录
+                  </a>
+                </div>
+
+                <div id="comment-form" class="hidden">
+                  <!-- 引用预览卡片 -->
+                  <div id="quote-preview" class="hidden mb-4 p-4 bg-gray-100 rounded-lg border-l-4 border-sky-500">
+                    <div class="flex justify-between items-start">
+                      <div class="flex-1">
+                        <p class="text-sm text-gray-600 mb-2">
+                          回复 <span id="quote-username" class="font-semibold text-sky-600"></span>
+                        </p>
+                        <p id="quote-content" class="text-sm text-gray-700 line-clamp-3"></p>
+                      </div>
+                      <button id="cancel-quote" class="ml-4 text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Markdown 工具栏 -->
+                  <div id="markdown-toolbar" class="mb-3 flex flex-wrap gap-2">
+                    <button data-action="bold" class="toolbar-btn px-3 py-1.5 bg-gray-200 hover:bg-gray-300 rounded transition-colors" title="加粗 (Ctrl+B)">
+                      <i class="fas fa-bold"></i>
+                    </button>
+                    <button data-action="italic" class="toolbar-btn px-3 py-1.5 bg-gray-200 hover:bg-gray-300 rounded transition-colors" title="斜体 (Ctrl+I)">
+                      <i class="fas fa-italic"></i>
+                    </button>
+                    <button data-action="code" class="toolbar-btn px-3 py-1.5 bg-gray-200 hover:bg-gray-300 rounded transition-colors" title="代码块">
+                      <i class="fas fa-code"></i>
+                    </button>
+                    <button data-action="link" class="toolbar-btn px-3 py-1.5 bg-gray-200 hover:bg-gray-300 rounded transition-colors" title="链接">
+                      <i class="fas fa-link"></i>
+                    </button>
+                    <button data-action="list" class="toolbar-btn px-3 py-1.5 bg-gray-200 hover:bg-gray-300 rounded transition-colors" title="列表">
+                      <i class="fas fa-list"></i>
+                    </button>
+                    <button data-action="quote" class="toolbar-btn px-3 py-1.5 bg-gray-200 hover:bg-gray-300 rounded transition-colors" title="引用">
+                      <i class="fas fa-quote-left"></i>
+                    </button>
+                  </div>
+
+                  <!-- 评论输入框 -->
+                  <div class="relative">
+                    <textarea
+                      id="comment-textarea"
+                      class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent resize-none"
+                      rows="5"
+                      placeholder="发表你的评论...（支持 Markdown 语法）"
+                    ></textarea>
+                    <div class="absolute bottom-2 right-2 text-sm text-gray-500">
+                      <span id="char-count">0</span> / 2000
+                    </div>
+                  </div>
+
+                  <!-- 预览区域 -->
+                  <div id="preview-section" class="hidden mt-4 p-4 border border-gray-300 rounded-lg bg-white">
+                    <h4 class="text-sm font-semibold text-gray-600 mb-2">预览</h4>
+                    <div id="preview-content" class="prose prose-sm max-w-none"></div>
+                  </div>
+
+                  <!-- 按钮组 -->
+                  <div class="mt-4 flex justify-between items-center">
+                    <button id="toggle-preview" class="text-sky-600 hover:text-sky-700 transition-colors">
+                      <i class="fas fa-eye mr-1"></i> 预览
+                    </button>
+                    <div class="flex gap-3">
+                      <button id="cancel-edit" class="hidden px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors">
+                        取消
+                      </button>
+                      <button id="submit-comment" class="px-6 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        发表评论
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -96,6 +183,444 @@
             console.error(err)
           });
       }
+
+      // ==================== 评论功能 ====================
+
+      const articleID = "{{ .article.ID }}";
+      let currentUser = {{ if .user }}{{ .user }}{{ else }}null{{ end }};
+      let editingCommentId = null;
+      let quotedCommentId = null;
+
+      // Markdown 转 HTML（调用后端 API）
+      async function markdownToHTML(markdown) {
+        try {
+          const response = await axios.post('/apis/markdown/to-html', { content: markdown });
+          return response.data.data.html;
+        } catch (error) {
+          console.error('Markdown 转换失败:', error);
+          // 降级使用 marked
+          return marked.parse(markdown);
+        }
+      }
+
+      // 格式化相对时间
+      function formatRelativeTime(dateString) {
+        const now = new Date();
+        const date = new Date(dateString);
+        const diff = now - date;
+
+        const seconds = Math.floor(diff / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+
+        if (seconds < 60) return '刚刚';
+        if (minutes < 60) return `${minutes} 分钟前`;
+        if (hours < 24) return `${hours} 小时前`;
+        if (days < 7) return `${days} 天前`;
+
+        return date.toLocaleDateString('zh-CN');
+      }
+
+      // HTML 转义函数，防止 XSS
+      function escapeHTML(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
+      // 渲染单条评论
+      async function renderComment(comment) {
+        const isOwner = currentUser && comment.user && comment.user.id === currentUser.id;
+        // 使用 escapeHTML 转义用户名和内容
+        const escapedParentUsername = comment.parent ? escapeHTML(comment.parent.user.username) : '';
+        const escapedParentContent = comment.parent ? escapeHTML(comment.parent.content) : '';
+        const replyPrefix = comment.parent ? `<p class="text-sm text-sky-600 mb-2">回复 @${escapedParentUsername}</p>` : '';
+        const parentPreview = comment.parent ? `
+          <div class="mt-2 p-2 bg-gray-100 rounded text-sm text-gray-600 line-clamp-3 cursor-pointer hover:bg-gray-200" onclick="scrollToComment(${comment.parent.id})">
+            <span class="font-semibold">${escapedParentUsername}:</span> ${escapedParentContent}
+          </div>
+        ` : '';
+
+        const htmlContent = await markdownToHTML(comment.content);
+        // 转义用户信息，防止 XSS
+        const escapedUsername = escapeHTML(comment.user.username);
+        const escapedAvatarURL = escapeHTML(comment.user.avatarURL);
+
+        return `
+          <div id="comment-${comment.id}" class="comment-item mb-6 pb-6 border-b border-gray-200 last:border-0">
+            <div class="flex">
+              <img src="${escapedAvatarURL}" alt="${escapedUsername}" class="w-10 h-10 rounded-full mr-4 flex-shrink-0">
+              <div class="flex-1">
+                <div class="flex items-center justify-between mb-2">
+                  <div>
+                    <span class="font-semibold text-gray-700">${escapedUsername}</span>
+                    <span class="text-sm text-gray-500 ml-2">${formatRelativeTime(comment.createdAt)}</span>
+                  </div>
+                  ${isOwner ? `
+                    <div class="flex gap-2">
+                      <button onclick="editComment(${comment.id})" class="text-sm text-sky-500 hover:text-sky-600">
+                        <i class="fas fa-edit mr-1"></i>编辑
+                      </button>
+                      <button onclick="deleteComment(${comment.id})" class="text-sm text-red-500 hover:text-red-600">
+                        <i class="fas fa-trash mr-1"></i>删除
+                      </button>
+                    </div>
+                  ` : `
+                    <button onclick="quoteComment(${comment.id})" class="text-sm text-gray-500 hover:text-gray-600">
+                      <i class="fas fa-reply mr-1"></i>引用
+                    </button>
+                  `}
+                </div>
+                ${replyPrefix}
+                <div class="prose prose-sm max-w-none text-gray-700 comment-content">${htmlContent}</div>
+                ${parentPreview}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // 高亮评论区域中的代码块
+      function highlightCommentCodeBlocks() {
+        const commentItems = document.querySelectorAll('.comment-item');
+        commentItems.forEach(item => {
+          const codeBlocks = item.querySelectorAll('pre code');
+          codeBlocks.forEach(block => {
+            // 排除 mermaid 代码块
+            if (!block.className.match(/(^|\s)mermaid(\s|$)/)) {
+              hljs.highlightElement(block);
+            }
+          });
+        });
+      }
+
+      // 加载评论列表
+      async function loadComments() {
+        try {
+          const response = await axios.get(`/apis/articles/${articleID}/comments`);
+          const comments = response.data.data || [];
+          const commentsList = document.getElementById('comments-list');
+
+          if (comments.length === 0) {
+            commentsList.innerHTML = '<p class="text-center text-gray-500 py-8">暂无评论，快来发表第一条评论吧</p>';
+            return;
+          }
+
+          // 异步渲染所有评论
+          const renderedComments = await Promise.all(comments.map(renderComment));
+          commentsList.innerHTML = renderedComments.join('');
+          
+          // 高亮评论中的代码块
+          highlightCommentCodeBlocks();
+        } catch (error) {
+          console.error('加载评论失败:', error);
+          document.getElementById('comments-list').innerHTML = '<p class="text-center text-red-500 py-8">加载评论失败，请稍后重试</p>';
+        }
+      }
+
+      // 检查登录状态
+      async function checkLoginStatus() {
+        try {
+          const response = await axios.get('/apis/user');
+          currentUser = response.data.data;
+          if (currentUser) {
+            document.getElementById('login-prompt').classList.add('hidden');
+            document.getElementById('comment-form').classList.remove('hidden');
+          }
+        } catch (error) {
+          currentUser = null;
+        }
+      }
+
+      // 字数统计和验证
+      const commentTextarea = document.getElementById('comment-textarea');
+      const charCount = document.getElementById('char-count');
+      const submitBtn = document.getElementById('submit-comment');
+
+      commentTextarea.addEventListener('input', function() {
+        const length = this.value.length;
+        charCount.textContent = length;
+
+        if (length > 2000) {
+          charCount.classList.add('text-red-500');
+          submitBtn.disabled = true;
+          submitBtn.textContent = '内容过长';
+        } else if (length === 0) {
+          charCount.classList.remove('text-red-500');
+          submitBtn.disabled = true;
+          submitBtn.textContent = editingCommentId ? '保存修改' : '发表评论';
+        } else {
+          charCount.classList.remove('text-red-500');
+          submitBtn.disabled = false;
+          submitBtn.textContent = editingCommentId ? '保存修改' : '发表评论';
+        }
+
+        // 实时预览
+        if (!document.getElementById('preview-section').classList.contains('hidden')) {
+          updatePreview();
+        }
+      });
+
+      // 支持 Tab 缩进
+      commentTextarea.addEventListener('keydown', function(e) {
+        if (e.key === 'Tab') {
+          e.preventDefault();
+          const start = this.selectionStart;
+          const end = this.selectionEnd;
+          this.value = this.value.substring(0, start) + '  ' + this.value.substring(end);
+          this.selectionStart = this.selectionEnd = start + 2;
+          this.dispatchEvent(new Event('input'));
+        }
+      });
+
+      // Markdown 工具栏
+      document.querySelectorAll('.toolbar-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const action = this.dataset.action;
+          const textarea = commentTextarea;
+          const start = textarea.selectionStart;
+          const end = textarea.selectionEnd;
+          const selectedText = textarea.value.substring(start, end);
+
+          let insertText = '';
+          let cursorOffset = 0;
+
+          switch (action) {
+            case 'bold':
+              insertText = `**${selectedText || '加粗文本'}**`;
+              cursorOffset = selectedText ? insertText.length : 2;
+              break;
+            case 'italic':
+              insertText = `*${selectedText || '斜体文本'}*`;
+              cursorOffset = selectedText ? insertText.length : 1;
+              break;
+            case 'code':
+              if (selectedText.includes('\n')) {
+                insertText = `\`\`\`\n${selectedText || '代码'}\n\`\`\``;
+                cursorOffset = 4;
+              } else {
+                insertText = `\`${selectedText || '代码'}\``;
+                cursorOffset = 1;
+              }
+              break;
+            case 'link':
+              insertText = `[${selectedText || '链接文本'}](url)`;
+              cursorOffset = selectedText ? insertText.length - 4 : 1;
+              break;
+            case 'list':
+              insertText = `- ${selectedText || '列表项'}`;
+              cursorOffset = 2;
+              break;
+            case 'quote':
+              insertText = `> ${selectedText || '引用文本'}`;
+              cursorOffset = 2;
+              break;
+          }
+
+          textarea.value = textarea.value.substring(0, start) + insertText + textarea.value.substring(end);
+          textarea.selectionStart = textarea.selectionEnd = start + cursorOffset;
+          textarea.focus();
+          textarea.dispatchEvent(new Event('input'));
+        });
+      });
+
+      // 切换预览
+      const togglePreviewBtn = document.getElementById('toggle-preview');
+      const previewSection = document.getElementById('preview-section');
+      const previewContent = document.getElementById('preview-content');
+
+      togglePreviewBtn.addEventListener('click', function() {
+        const isHidden = previewSection.classList.toggle('hidden');
+        if (!isHidden) {
+          updatePreview();
+          this.innerHTML = '<i class="fas fa-eye-slash mr-1"></i>隐藏预览';
+        } else {
+          this.innerHTML = '<i class="fas fa-eye mr-1"></i>预览';
+        }
+      });
+
+      function updatePreview() {
+        markdownToHTML(commentTextarea.value || '无内容').then(html => {
+          previewContent.innerHTML = html;
+          // 高亮预览区域的代码块
+          previewContent.querySelectorAll('pre code').forEach(block => {
+            if (!block.className.match(/(^|\s)mermaid(\s|$)/)) {
+              hljs.highlightElement(block);
+            }
+          });
+        });
+      }
+
+      // 提交评论
+      async function submitComment() {
+        if (!currentUser) {
+          showToast('请先登录', 'error');
+          return;
+        }
+
+        const content = commentTextarea.value.trim();
+        if (!content) {
+          showToast('评论内容不能为空', 'error');
+          return;
+        }
+
+        if (content.length > 2000) {
+          showToast('评论内容过长', 'error');
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = '提交中...';
+
+        try {
+          if (editingCommentId) {
+            // 更新评论
+            await axios.put(`/apis/comments/${editingCommentId}`, { content });
+            showToast('评论已更新', 'success');
+            editingCommentId = null;
+            document.getElementById('cancel-edit').classList.add('hidden');
+          } else {
+            // 创建评论
+            await axios.post(`/apis/articles/${articleID}/comments`, {
+              content,
+              parentID: quotedCommentId
+            });
+            showToast('评论已发表', 'success');
+          }
+
+          // 清空输入框
+          commentTextarea.value = '';
+          commentTextarea.dispatchEvent(new Event('input'));
+
+          // 清除引用
+          clearQuote();
+
+          // 重新加载评论
+          await loadComments();
+          
+          // 高亮评论中的代码块
+          highlightCommentCodeBlocks();
+        } catch (error) {
+          const message = error.response?.data?.message || error.message;
+          showToast(`提交失败: ${message}`, 'error');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = editingCommentId ? '保存修改' : '发表评论';
+        }
+      }
+
+      submitBtn.addEventListener('click', submitComment);
+
+      // 编辑评论
+      async function editComment(commentId) {
+        try {
+          const response = await axios.get(`/apis/articles/${articleID}/comments`);
+          const comment = response.data.data.find(c => c.id === commentId);
+          if (!comment) {
+            showToast('评论不存在', 'error');
+            return;
+          }
+
+          editingCommentId = commentId;
+          commentTextarea.value = comment.content;
+          commentTextarea.dispatchEvent(new Event('input'));
+
+          document.getElementById('cancel-edit').classList.remove('hidden');
+          document.getElementById('comment-form').scrollIntoView({ behavior: 'smooth' });
+        } catch (error) {
+          showToast('加载评论失败', 'error');
+        }
+      }
+
+      // 取消编辑
+      document.getElementById('cancel-edit').addEventListener('click', function() {
+        editingCommentId = null;
+        commentTextarea.value = '';
+        commentTextarea.dispatchEvent(new Event('input'));
+        this.classList.add('hidden');
+      });
+
+      // 删除评论
+      async function deleteComment(commentId) {
+        if (!confirm('确定要删除这条评论吗？')) {
+          return;
+        }
+
+        try {
+          await axios.delete(`/apis/comments/${commentId}`);
+          showToast('评论已删除', 'success');
+
+          // 从列表中移除
+          const commentElement = document.getElementById(`comment-${commentId}`);
+          if (commentElement) {
+            commentElement.remove();
+          }
+        } catch (error) {
+          const message = error.response?.data?.message || error.message;
+          showToast(`删除失败: ${message}`, 'error');
+        }
+      }
+
+      // 引用评论
+      async function quoteComment(commentId) {
+        try {
+          const response = await axios.get(`/apis/articles/${articleID}/comments`);
+          const comment = response.data.data.find(c => c.id === commentId);
+          if (!comment) {
+            showToast('评论不存在', 'error');
+            return;
+          }
+
+          quotedCommentId = commentId;
+          document.getElementById('quote-preview').classList.remove('hidden');
+          document.getElementById('quote-username').textContent = comment.user.username;
+          document.getElementById('quote-content').textContent = comment.content;
+
+          document.getElementById('comment-form').scrollIntoView({ behavior: 'smooth' });
+          commentTextarea.focus();
+        } catch (error) {
+          showToast('加载评论失败', 'error');
+        }
+      }
+
+      // 取消引用
+      document.getElementById('cancel-quote').addEventListener('click', clearQuote);
+
+      function clearQuote() {
+        quotedCommentId = null;
+        document.getElementById('quote-preview').classList.add('hidden');
+      }
+
+      // 滚动到指定评论
+      function scrollToComment(commentId) {
+        const commentElement = document.getElementById(`comment-${commentId}`);
+        if (commentElement) {
+          commentElement.scrollIntoView({ behavior: 'smooth' });
+          commentElement.classList.add('bg-sky-100');
+          setTimeout(() => {
+            commentElement.classList.remove('bg-sky-100');
+          }, 2000);
+        }
+      }
+
+      // Toast 提示
+      function showToast(message, type = 'info') {
+        const toast = document.createElement('div');
+        const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-sky-500';
+        toast.className = `fixed top-4 right-4 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-pulse`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {toast.remove();}, 3000);
+      }
+
+      // 初始化
+      document.addEventListener('DOMContentLoaded', function() {
+        checkLoginStatus();
+        loadComments();
+      });
     </script>
   </body>
 </html>

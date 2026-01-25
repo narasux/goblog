@@ -16,6 +16,8 @@ go.work
 
 .idea/
 
+.codebuddy/
+
 logs
 *.log
 
