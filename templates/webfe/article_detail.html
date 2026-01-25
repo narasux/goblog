@@ -311,7 +311,7 @@
           // 异步渲染所有评论
           const renderedComments = await Promise.all(comments.map(renderComment));
           commentsList.innerHTML = renderedComments.join('');
-          
+
           // 高亮评论中的代码块
           highlightCommentCodeBlocks();
         } catch (error) {
@@ -499,7 +499,7 @@
 
           // 重新加载评论
           await loadComments();
-          
+
           // 高亮评论中的代码块
           highlightCommentCodeBlocks();
         } catch (error) {
