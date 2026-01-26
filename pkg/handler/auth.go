@@ -84,14 +84,19 @@ func GitHubCallback(c *gin.Context) {
 
 	// 验证 state 参数
 	savedState, err := c.Cookie(oauthStateCookieName)
-	if err != nil || savedState != state {
-		logger.Error("OAuth state mismatch")
-		c.Redirect(http.StatusFound, "/?error=invalid_state")
+	if err != nil {
+		logger.Errorf("OAuth state cookie not found: %v, expected state: %s", err, state)
+		c.Redirect(http.StatusFound, "/?error=invalid_state_not_found")
+		return
+	}
+	if savedState != state {
+		logger.Errorf("OAuth state mismatch: cookie=%s, expected=%s", savedState, state)
+		c.Redirect(http.StatusFound, "/?error=invalid_state_mismatch")
 		return
 	}
 
-	// 清除 state cookie
-	c.SetCookie(oauthStateCookieName, "", -1, "/", "", false, true)
+	// 清除 state cookie（必须使用相同的 Secure 属性才能正确清除）
+	c.SetCookie(oauthStateCookieName, "", -1, "/", "", envs.DomainScheme == "https", true)
 
 	// 用 code 换取 access_token
 	accessToken, err := oauth.ExchangeToken(ctx, code)
@@ -170,7 +175,7 @@ func GitHubCallback(c *gin.Context) {
 	redirectURL := "/"
 	if savedRedirect, err := c.Cookie(oauthRedirectCookieName); err == nil && savedRedirect != "" {
 		redirectURL = savedRedirect
-		c.SetCookie(oauthRedirectCookieName, "", -1, "/", "", false, true)
+		c.SetCookie(oauthRedirectCookieName, "", -1, "/", "", envs.DomainScheme == "https", true)
 	}
 
 	// 重定向到原页面
