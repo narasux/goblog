@@ -1,5 +1,14 @@
 [
   {
+    "id": "k8s-package-management",
+    "category": "技术分享",
+    "tags": ["Kubernetes", "Helm", "Kustomize"],
+    "title": "Kubernetes 包管理方案",
+    "desc": "本文对比 Helm、Kustomize、Jsonnet、CUE、Pulumi、Carvel 等 K8s 包管理方案",
+    "updateAt": "2026-04-19",
+    "content": ""
+  },
+  {
     "id": "multiple-processes-in-docker-container",
     "category": "技术分享",
     "tags": ["Docker"],
