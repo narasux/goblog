@@ -64,6 +64,7 @@ services:
       GITHUB_CALLBACK_URL: ${GITHUB_CALLBACK_URL}
       SESSION_SECRET: ${SESSION_SECRET}
       SESSION_MAX_AGE: ${SESSION_MAX_AGE}
+      INTERACTION_ENABLED: ${INTERACTION_ENABLED}
     networks:
       - goblog
     ports:

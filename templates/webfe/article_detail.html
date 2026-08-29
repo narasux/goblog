@@ -40,6 +40,11 @@
 
               <!-- 评论输入区域 -->
               <div id="comment-input-section" class="mt-8 pt-6 border-t border-gray-300">
+                {{- if not .interactionEnabled }}
+                <div class="text-center py-8">
+                  <p class="text-gray-600">交互功能暂未开放</p>
+                </div>
+                {{- else }}
                 <div id="login-prompt" class="text-center py-8">
                   <p class="text-gray-600 mb-4">请登录后发表评论</p>
                   <a href="/auth/github/login?redirect=/articles/{{ .article.ID }}" class="px-6 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors inline-flex items-center">
@@ -120,6 +125,7 @@
                     </div>
                   </div>
                 </div>
+                {{- end }}
               </div>
             </div>
           </div>
@@ -187,6 +193,7 @@
       // ==================== 评论功能 ====================
 
       const articleID = "{{ .article.ID }}";
+      const interactionEnabled = {{ .interactionEnabled }};
       let currentUser = {{ if .user }}{{ .user }}{{ else }}null{{ end }};
       let editingCommentId = null;
       let quotedCommentId = null;
@@ -248,17 +255,7 @@
         const escapedUsername = escapeHTML(comment.user.username);
         const escapedAvatarURL = escapeHTML(comment.user.avatarURL);
 
-        return `
-          <div id="comment-${comment.id}" class="comment-item mb-6 pb-6 border-b border-gray-200 last:border-0">
-            <div class="flex">
-              <img src="${escapedAvatarURL}" alt="${escapedUsername}" class="w-10 h-10 rounded-full mr-4 flex-shrink-0">
-              <div class="flex-1">
-                <div class="flex items-center justify-between mb-2">
-                  <div>
-                    <span class="font-semibold text-gray-700">${escapedUsername}</span>
-                    <span class="text-sm text-gray-500 ml-2">${formatRelativeTime(comment.createdAt)}</span>
-                  </div>
-                  ${isOwner ? `
+        const actionButtons = !interactionEnabled ? '' : (isOwner ? `
                     <div class="flex gap-2">
                       <button onclick="editComment(${comment.id})" class="text-sm text-sky-500 hover:text-sky-600">
                         <i class="fas fa-edit mr-1"></i>编辑
@@ -271,7 +268,19 @@
                     <button onclick="quoteComment(${comment.id})" class="text-sm text-gray-500 hover:text-gray-600">
                       <i class="fas fa-reply mr-1"></i>引用
                     </button>
-                  `}
+                  `);
+
+        return `
+          <div id="comment-${comment.id}" class="comment-item mb-6 pb-6 border-b border-gray-200 last:border-0">
+            <div class="flex">
+              <img src="${escapedAvatarURL}" alt="${escapedUsername}" class="w-10 h-10 rounded-full mr-4 flex-shrink-0">
+              <div class="flex-1">
+                <div class="flex items-center justify-between mb-2">
+                  <div>
+                    <span class="font-semibold text-gray-700">${escapedUsername}</span>
+                    <span class="text-sm text-gray-500 ml-2">${formatRelativeTime(comment.createdAt)}</span>
+                  </div>
+                  ${actionButtons}
                 </div>
                 ${replyPrefix}
                 <div class="prose prose-sm max-w-none text-gray-700 comment-content">${htmlContent}</div>
@@ -322,6 +331,9 @@
 
       // 检查登录状态
       async function checkLoginStatus() {
+        if (!interactionEnabled) {
+          return;
+        }
         try {
           const response = await axios.get('/apis/user');
           currentUser = response.data.data;
@@ -334,11 +346,12 @@
         }
       }
 
-      // 字数统计和验证
+      // 字数统计和验证（开关关闭时表单不渲染，后续绑定需短路）
       const commentTextarea = document.getElementById('comment-textarea');
       const charCount = document.getElementById('char-count');
       const submitBtn = document.getElementById('submit-comment');
 
+      if (interactionEnabled && commentTextarea) {
       commentTextarea.addEventListener('input', function() {
         const length = this.value.length;
         charCount.textContent = length;
@@ -455,6 +468,10 @@
 
       // 提交评论
       async function submitComment() {
+        if (!interactionEnabled) {
+          showToast('交互功能暂未开放', 'error');
+          return;
+        }
         if (!currentUser) {
           showToast('请先登录', 'error');
           return;
@@ -513,8 +530,23 @@
 
       submitBtn.addEventListener('click', submitComment);
 
+      // 取消编辑
+      document.getElementById('cancel-edit').addEventListener('click', function() {
+        editingCommentId = null;
+        commentTextarea.value = '';
+        commentTextarea.dispatchEvent(new Event('input'));
+        this.classList.add('hidden');
+      });
+
+      // 取消引用
+      document.getElementById('cancel-quote').addEventListener('click', clearQuote);
+      }
+
       // 编辑评论
       async function editComment(commentId) {
+        if (!interactionEnabled) {
+          return;
+        }
         try {
           const response = await axios.get(`/apis/articles/${articleID}/comments`);
           const comment = response.data.data.find(c => c.id === commentId);
@@ -534,16 +566,11 @@
         }
       }
 
-      // 取消编辑
-      document.getElementById('cancel-edit').addEventListener('click', function() {
-        editingCommentId = null;
-        commentTextarea.value = '';
-        commentTextarea.dispatchEvent(new Event('input'));
-        this.classList.add('hidden');
-      });
-
       // 删除评论
       async function deleteComment(commentId) {
+        if (!interactionEnabled) {
+          return;
+        }
         if (!confirm('确定要删除这条评论吗？')) {
           return;
         }
@@ -565,6 +592,9 @@
 
       // 引用评论
       async function quoteComment(commentId) {
+        if (!interactionEnabled) {
+          return;
+        }
         try {
           const response = await axios.get(`/apis/articles/${articleID}/comments`);
           const comment = response.data.data.find(c => c.id === commentId);
@@ -584,9 +614,6 @@
           showToast('加载评论失败', 'error');
         }
       }
-
-      // 取消引用
-      document.getElementById('cancel-quote').addEventListener('click', clearQuote);
 
       function clearQuote() {
         quotedCommentId = null;

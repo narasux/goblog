@@ -2,12 +2,13 @@ package handler
 
 import (
 	"errors"
-	"github.com/narasux/goblog/pkg/common/ctxkey"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 
+	"github.com/narasux/goblog/pkg/common/auth"
+	"github.com/narasux/goblog/pkg/common/ctxkey"
 	"github.com/narasux/goblog/pkg/envs"
 	"github.com/narasux/goblog/pkg/infras/database"
 	"github.com/narasux/goblog/pkg/logging"
@@ -30,6 +31,11 @@ const (
 // GitHubLogin 发起 GitHub OAuth 登录
 // GET /auth/github/login
 func GitHubLogin(c *gin.Context) {
+	if !auth.IsInteractionEnabled() {
+		c.Redirect(http.StatusFound, "/?error=login_disabled")
+		return
+	}
+
 	// 检查 GitHub OAuth 配置
 	if envs.GithubClientID == "" || envs.GithubClientSecret == "" {
 		logging.GetSystemLogger().Error("GitHub OAuth not configured")
@@ -67,6 +73,11 @@ func GitHubLogin(c *gin.Context) {
 // GitHubCallback GitHub OAuth 回调处理
 // GET /auth/github/callback
 func GitHubCallback(c *gin.Context) {
+	if !auth.IsInteractionEnabled() {
+		c.Redirect(http.StatusFound, "/?error=login_disabled")
+		return
+	}
+
 	logger := logging.GetSystemLogger()
 	ctx := c.Request.Context()
 
