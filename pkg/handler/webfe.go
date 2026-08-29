@@ -62,10 +62,11 @@ func ListArticles(c *gin.Context) {
 	})
 
 	c.HTML(http.StatusOK, "articles.html", gin.H{
-		"articles":   articles,
-		"viewCntMap": viewCntMap,
-		"likeCntMap": likeCntMap,
-		"user":       auth.GetLoginUser(c),
+		"articles":           articles,
+		"viewCntMap":         viewCntMap,
+		"likeCntMap":         likeCntMap,
+		"user":               auth.GetLoginUser(c),
+		"interactionEnabled": auth.IsInteractionEnabled(),
 	})
 }
 
@@ -101,9 +102,10 @@ func RetrieveArticle(c *gin.Context) {
 	}
 
 	c.HTML(http.StatusOK, "article_detail.html", gin.H{
-		"article":         article,
-		"mermaidRequired": strings.Contains(article.Content, "mermaid"),
-		"user":            auth.GetLoginUser(c),
+		"article":            article,
+		"mermaidRequired":    strings.Contains(article.Content, "mermaid"),
+		"user":               auth.GetLoginUser(c),
+		"interactionEnabled": auth.IsInteractionEnabled(),
 	})
 }
 
@@ -130,10 +132,11 @@ func GetPeriodicTable(c *gin.Context) {
 	}
 
 	c.HTML(http.StatusOK, "periodic_table.html", gin.H{
-		"Name":   periodicTable.Name,
-		"Source": periodicTable.Source,
-		"Groups": periodicTable.Groups,
-		"user":   auth.GetLoginUser(c),
+		"Name":               periodicTable.Name,
+		"Source":             periodicTable.Source,
+		"Groups":             periodicTable.Groups,
+		"user":               auth.GetLoginUser(c),
+		"interactionEnabled": auth.IsInteractionEnabled(),
 	})
 }
 
