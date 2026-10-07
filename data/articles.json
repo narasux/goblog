@@ -1,5 +1,14 @@
 [
   {
+    "id": "the-story-of-CueCast-development",
+    "category": "技术分享",
+    "tags": ["YOLO"],
+    "title": "CueCast 开发纪实",
+    "desc": "本文记录 CueCast（台球帮帮）从 \"一时兴起\" 到逐步成型的完整过程。",
+    "updateAt": "2026-10-07",
+    "content": ""
+  },
+  {
     "id": "multiple-processes-in-docker-container",
     "category": "技术分享",
     "tags": ["Docker"],
