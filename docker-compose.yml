@@ -67,8 +67,8 @@ services:
       INTERACTION_ENABLED: ${INTERACTION_ENABLED}
     networks:
       - goblog
-    # 由 unity-nginx 在容器网络内反代，不对宿主机/公网暴露 8080；
-    # 如需本机调试，临时改为 - "127.0.0.1:8080:8080"，用完移除。
+    ports:
+      - "8080:8080"
     volumes:
       - ${ROOT_DIR}/goblog-logs:/data/logs/
   # 反向代理 Nginx
