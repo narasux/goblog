@@ -22,3 +22,14 @@ func GetInt(key string, fallback int) int {
 	}
 	return fallback
 }
+
+// GetBool 读取布尔型环境变量，支持默认值
+// 仅当值为 strconv.ParseBool 可识别的形式（如 1/t/true/0/f/false）时才生效，否则回退到默认值
+func GetBool(key string, fallback bool) bool {
+	if value, ok := os.LookupEnv(key); ok {
+		if boolVal, err := strconv.ParseBool(value); err == nil {
+			return boolVal
+		}
+	}
+	return fallback
+}

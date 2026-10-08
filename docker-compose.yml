@@ -64,6 +64,7 @@ services:
       GITHUB_CALLBACK_URL: ${GITHUB_CALLBACK_URL}
       SESSION_SECRET: ${SESSION_SECRET}
       SESSION_MAX_AGE: ${SESSION_MAX_AGE}
+      INTERACTION_ENABLED: ${INTERACTION_ENABLED}
     networks:
       - goblog
     # 由 unity-nginx 在容器网络内反代，不对宿主机/公网暴露 8080；

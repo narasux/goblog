@@ -60,6 +60,11 @@ func GetArticleComments(c *gin.Context) {
 
 // CreateComment 创建新评论
 func CreateComment(c *gin.Context) {
+	if !auth.IsInteractionEnabled() {
+		ginx.SetErrResp(c, http.StatusForbidden, auth.InteractionDisabledMsg)
+		return
+	}
+
 	user := auth.GetLoginUser(c)
 	if user == nil {
 		ginx.SetErrResp(c, http.StatusUnauthorized, "未登录，请先登录")
@@ -95,6 +100,11 @@ func CreateComment(c *gin.Context) {
 
 // UpdateComment 更新评论
 func UpdateComment(c *gin.Context) {
+	if !auth.IsInteractionEnabled() {
+		ginx.SetErrResp(c, http.StatusForbidden, auth.InteractionDisabledMsg)
+		return
+	}
+
 	user := auth.GetLoginUser(c)
 	if user == nil {
 		ginx.SetErrResp(c, http.StatusUnauthorized, "未登录，请先登录")
@@ -140,6 +150,11 @@ func UpdateComment(c *gin.Context) {
 
 // DeleteComment 删除评论
 func DeleteComment(c *gin.Context) {
+	if !auth.IsInteractionEnabled() {
+		ginx.SetErrResp(c, http.StatusForbidden, auth.InteractionDisabledMsg)
+		return
+	}
+
 	user := auth.GetLoginUser(c)
 	if user == nil {
 		ginx.SetErrResp(c, http.StatusUnauthorized, "未登录，请先登录")

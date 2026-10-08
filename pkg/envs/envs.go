@@ -101,4 +101,9 @@ var (
 	SessionMaxAge = envx.GetInt("SESSION_MAX_AGE", 86400)
 	// SessionCookieName Session Cookie 名称
 	SessionCookieName = envx.Get("SESSION_COOKIE_NAME", "goblog_session")
+
+	// ========== 交互功能开关 ==========
+
+	// InteractionEnabled 是否启用交互功能（关闭后不能发起登录，也不能创建/编辑/删除评论）
+	InteractionEnabled = envx.GetBool("INTERACTION_ENABLED", false)
 )
