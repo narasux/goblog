@@ -16,8 +16,8 @@ services:
       - --collation-server=utf8mb4_unicode_ci
     networks:
       - goblog
-    ports:
-      - "3306:3306"
+    # 3306 仅容器网络内访问（goblog 通过 service 名连接），不对宿主机/公网暴露；
+    # 如需本机调试，临时改为 - "127.0.0.1:3306:3306"，用完移除。
     volumes:
       - ${ROOT_DIR}/mysql-data:/var/lib/mysql
   # 博客 web 服务
@@ -66,8 +66,8 @@ services:
       SESSION_MAX_AGE: ${SESSION_MAX_AGE}
     networks:
       - goblog
-    ports:
-      - "8080:8080"
+    # 由 unity-nginx 在容器网络内反代，不对宿主机/公网暴露 8080；
+    # 如需本机调试，临时改为 - "127.0.0.1:8080:8080"，用完移除。
     volumes:
       - ${ROOT_DIR}/goblog-logs:/data/logs/
   # 反向代理 Nginx
