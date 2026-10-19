@@ -18,6 +18,15 @@ services:
       - goblog
     # 3306 仅容器网络内访问（goblog 通过 service 名连接），不对宿主机/公网暴露；
     # 如需本机调试，临时改为 - "127.0.0.1:3306:3306"，用完移除。
+    # 健康检查：只有通过该检查，依赖它的 migrate / web 才会启动
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    # mysql 启动期间依赖服务可能连接失败退出，这里自动重启保证最终可用
+    restart: unless-stopped
     volumes:
       - ${ROOT_DIR}/mysql-data:/var/lib/mysql
   # 博客 web 服务
@@ -27,9 +36,10 @@ services:
     entrypoint:
       - goblog
       - migrate
-    # 等待 mysql 就绪再执行 migrate
+    # 等 mysql 健康检查通过再执行 migrate（depends_on 短语法只保证启动顺序，不保证就绪）
     depends_on:
-      - unity-mysql
+      unity-mysql:
+        condition: service_healthy
     environment:
       LOG_LEVEL: info
       MYSQL_HOST: unity-mysql
@@ -45,10 +55,14 @@ services:
   goblog-web:
     image: goblog:${GOBLOG_IMAGE_TAG}
     container_name: goblog-web
-    # 等待 mysql 就绪，且 migrate 执行完成后，再启动 web 服务
+    # mysql 就绪，且 migrate 成功退出后，再启动 web 服务
     depends_on:
-      - unity-mysql
-      - goblog-migrate
+      unity-mysql:
+        condition: service_healthy
+      goblog-migrate:
+        condition: service_completed_successfully
+    # web 启动时会 ping 数据库，失败会直接退出，这里自动重启保证最终可用
+    restart: unless-stopped
     environment:
       LOG_LEVEL: info
       REAL_CLIENT_IP_HEADER_KEY: X-Real-IP
@@ -78,6 +92,7 @@ services:
     # 先启动 web 服务再代理
     depends_on:
       - goblog-web
+    restart: unless-stopped
     networks:
       - goblog
     ports:

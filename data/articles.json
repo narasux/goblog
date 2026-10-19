@@ -1,5 +1,14 @@
 [
   {
+    "id": "command-block-power-on",
+    "category": "技术分享",
+    "tags": ["VibeCoding"],
+    "title": "命令方块，启动！",
+    "desc": "本文记录一个 VibeCoding 的效率提升硬件。",
+    "updateAt": "2026-10-18",
+    "content": ""
+  },
+  {
     "id": "the-story-of-CueCast-development",
     "category": "技术分享",
     "tags": ["YOLO"],
